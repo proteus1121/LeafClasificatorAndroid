@@ -1,6 +1,8 @@
 package com.ishchenko.artem.leafclassifierandroid;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -8,6 +10,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+
+import com.ishchenko.artem.tools.ProjectEnv;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -20,9 +24,11 @@ public class LeafClassifier extends FragmentActivity {
 
     ViewPager pager;
     PagerAdapter pagerAdapter;
+    public static ProjectEnv projectEnv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        projectEnv = new ProjectEnv(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leaf_clasificator);
 
@@ -46,6 +52,10 @@ public class LeafClassifier extends FragmentActivity {
             public void onPageScrollStateChanged(int state) {
             }
         });
+    }
+
+    public ProjectEnv getProjectEnv() {
+        return projectEnv;
     }
 
     private class MyFragmentPagerAdapter extends FragmentPagerAdapter {
@@ -74,5 +84,4 @@ public class LeafClassifier extends FragmentActivity {
             return FRAGMENTS.get(position).getTitle();
         }
     }
-
 }
