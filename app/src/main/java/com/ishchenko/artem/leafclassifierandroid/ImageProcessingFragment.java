@@ -7,6 +7,7 @@ package com.ishchenko.artem.leafclassifierandroid;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -46,7 +48,8 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
     int backColor;
     LeafImage actualImage;
     ExpandableListView treePanel;
-    List<Pair<String, List<String>>> spaces;
+    List<Pair<String, List<String>>> spaces = new LinkedList<>();
+    ;
 
 
     static ImageProcessingFragment newInstance(int page) {
@@ -72,7 +75,6 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
         View view = inflater.inflate(R.layout.image_proceesing_fragment, null);
 
         Button addImage = view.findViewById(R.id.addImage);
-        spaces = new LinkedList<>();
         treePanel = view.findViewById(R.id.treePanel);
         LeafAdapter adapter = new LeafAdapter(getContext(), spaces);
         treePanel.setAdapter(adapter);
@@ -80,12 +82,13 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
         addImage.setOnClickListener((e) -> {
 
             String[] spacesNames = new String[spaces.size()];
-            for (int i = 0; i < spaces.size(); i++){
+            for (int i = 0; i < spaces.size(); i++) {
                 spacesNames[i] = spaces.get(i).first;
             }
             ArrayAdapter<String> adapterArray = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, spacesNames);
             adapterArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             Spinner classNameField = new Spinner(getContext());
+            classNameField.setAdapter(adapterArray);
 
             new AlertDialog.Builder(this.getContext())
                     .setTitle("Choose a class")
@@ -95,12 +98,11 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
                         int spaceId = classNameField.getSelectedItemPosition();
 
 
-
                         PickImageDialog.build(new PickSetup()).setOnPickResult(r -> {
 
                             actualImage = new LeafImage(r.getBitmap(), r.getPath());
                             spaces.get(spaceId).second.add(r.getPath());
-                            ((LeafSpecies)projectEnv.getLeafSpecies().get(spaceId)).addImage(actualImage);
+                            ((LeafSpecies) projectEnv.getLeafSpecies().get(spaceId)).addImage(actualImage);
 
 //                if (lImage != null && lImage.getImage() != null) {
                             // We add the leaf leafImage to the tree and to the
@@ -162,67 +164,92 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
         SeekBar threshold = view.findViewById(R.id.threshold);
         SeekBar distance = view.findViewById(R.id.distance);
         SeekBar minLine = view.findViewById(R.id.minLine);
-        TextView progressText = view.findViewById(R.id.progressText);
-        ProgressBar progressBar = view.findViewById(R.id.progressBar);
+        ImageView imageView = view.findViewById(R.id.imageView);
+        findTokens.setOnClickListener(e -> {
+            findTokensProcess(view);
+        });
 
-        findTokens.setOnClickListener((e) -> {
+        return view;
+    }
+
+    private void findTokensProcess(View view) {
+        SeekBar threshold = view.findViewById(R.id.threshold);
+        SeekBar distance = view.findViewById(R.id.distance);
+        SeekBar minLine = view.findViewById(R.id.minLine);
+        new MyTask(view, threshold.getProgress(), distance.getProgress(), minLine.getProgress()).execute();
+
+    }
+
+    @Override
+    public String getTitle() {
+        return title;
+    }
+
+    class MyTask extends AsyncTask<Void, String, Void> {
+        View view;
+        TextView progressText;
+        ProgressBar progressBar;
+        int threshold;
+        int distance;
+        int minLine;
+
+        public MyTask(View view, int threshold, int distance, int minLine) {
+            this.view = view;
+            this.threshold = threshold;
+            this.distance = distance;
+            this.minLine = minLine;
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
             if (actualImage == null) {
-                return;
+                return null;
             }
 
+            Button findTokens = view.findViewById(R.id.findTokens);
+            progressText = view.findViewById(R.id.progressText);
+            progressBar = view.findViewById(R.id.progressBar);
+
             // first we disable the button
-            findTokens.setEnabled(false);
+            getActivity().runOnUiThread(() -> findTokens.setEnabled(false));
 
             // Now we perform the Image processing
-            ImageProcessor imgProc = new ImageProcessor(actualImage.getImage(), getContext());
+            ImageProcessor imgProc = new ImageProcessor(actualImage.getImage(), ImageProcessingFragment.this.getContext());
 
 //            imgControlBar.setValue(1);
-            getActivity().runOnUiThread(() -> {
-                progressText.setText("Edge detection...");
-                progressBar.setProgress(5);
-            });
+            publishProgress("Edge detection...", "5");
 //
-            imgProc.edgeDetect(threshold.getProgress() * 10);
+            imgProc.edgeDetect(threshold * 10);
 //            procImagePanel.setImage(imgProc.getImage(procIma gePanel));
-            getActivity().runOnUiThread(() -> {
-                progressText.setText("Thinning...");
-                progressBar.setProgress(20);
-            });
+            publishProgress("Thinning...", "20");
 
             imgProc.thinning();
 //            procImagePanel.setImage(imgProc.getImage(procImagePanel));
-            getActivity().runOnUiThread(() -> {
-                progressText.setText("Line checking...");
-                progressBar.setProgress(40);
-            });
+            publishProgress("Line checking...", "40");
 
 //            lrec.refresh();
-            imgProc.checkLines(minLine.getProgress() * 10);
-            getActivity().runOnUiThread(() -> {
-                progressText.setText("Distance points...");
-                progressBar.setProgress(60);
-            });
-
+            imgProc.checkLines(minLine * 10);
+            publishProgress("Distance points...", "60");
 
 //            lrec.setStatusField(getString("STATUS_DISTANCE"));
 //            lrec.refresh();
-            imgProc.markPoints(distance.getProgress() * 10);
+            imgProc.markPoints(distance * 10);
 //            procImagePanel.setImage(imgProc.getImage(procImagePanel));
-            getActivity().runOnUiThread(() -> {
-                progressText.setText("Searching tokens...");
-                progressBar.setProgress(80);
-            });
+            publishProgress("Searching tokens...", "80");
 
             // now we calculate the tokens of the image by calculating
             // the angles
 //            lrec.refresh();
             imgProc.calcAngels();
 //            procImagePanel.setImage(imgProc.getImage(procImagePanel));
-            getActivity().runOnUiThread(() -> {
-                progressText.setText("finished.");
-                progressBar.setProgress(100);
-            });
-
+//            imageView.setImageBitmap();setImage(imgProc.getImage());
+            publishProgress("finished.", "100");
 
             // set the TextField for the amount of tokens
             ArrayList leafTokens = imgProc.getTokens();
@@ -233,17 +260,23 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
 //            lrec.setStatusField(getString("STATUS_FINISHED"));
 
             // at the end we enable the button again
-            findTokens.setEnabled(true);
+            getActivity().runOnUiThread(() -> findTokens.setEnabled(true));
 
 //            projectEnv.setModified();
 //            lrec.updateProjectEnv();
-        });
+            return null;
+        }
 
-        return view;
-    }
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+            progressText.setText(values[0]);
+            progressBar.setProgress(Integer.parseInt(values[1]));
+        }
 
-    @Override
-    public String getTitle() {
-        return title;
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+        }
     }
 }

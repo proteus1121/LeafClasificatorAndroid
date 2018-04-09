@@ -107,6 +107,13 @@ public class ImageProcessor extends View {
         }
     }
 
+    public Image getImage() {
+        Image myImage;
+        myImage = createImage(new MemoryImageSource(width, height, Pixels, 0, width));
+
+        return myImage;
+    }
+
     /**
      * Clear()
      * <p>
