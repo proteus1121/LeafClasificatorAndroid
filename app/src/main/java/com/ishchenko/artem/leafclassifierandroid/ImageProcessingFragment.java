@@ -5,7 +5,8 @@ package com.ishchenko.artem.leafclassifierandroid;
  */
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,13 +30,16 @@ import com.ishchenko.artem.gfx.LeafSpecies;
 import com.vansuita.pickimage.bundle.PickSetup;
 import com.vansuita.pickimage.dialog.PickImageDialog;
 
+import net.windward.android.awt.image.BufferedImage;
+import net.windward.android.imageio.ImageIO;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import static com.ishchenko.artem.leafclassifierandroid.LeafClassifier.projectEnv;
 
@@ -101,7 +105,8 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
                         PickImageDialog.build(new PickSetup()).setOnPickResult(r -> {
 
                             actualImage = new LeafImage(r.getBitmap(), r.getPath());
-                            spaces.get(spaceId).second.add(r.getPath());
+                            List<String> path = Arrays.asList(r.getPath().split("/"));
+                            spaces.get(spaceId).second.add(path.get(path.size() - 1));
                             ((LeafSpecies) projectEnv.getLeafSpecies().get(spaceId)).addImage(actualImage);
 
 //                if (lImage != null && lImage.getImage() != null) {
@@ -164,7 +169,6 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
         SeekBar threshold = view.findViewById(R.id.threshold);
         SeekBar distance = view.findViewById(R.id.distance);
         SeekBar minLine = view.findViewById(R.id.minLine);
-        ImageView imageView = view.findViewById(R.id.imageView);
         findTokens.setOnClickListener(e -> {
             findTokensProcess(view);
         });
@@ -176,7 +180,7 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
         SeekBar threshold = view.findViewById(R.id.threshold);
         SeekBar distance = view.findViewById(R.id.distance);
         SeekBar minLine = view.findViewById(R.id.minLine);
-        new MyTask(view, threshold.getProgress(), distance.getProgress(), minLine.getProgress()).execute();
+        new FindTokensTask(view, threshold.getProgress(), distance.getProgress(), minLine.getProgress()).execute();
 
     }
 
@@ -185,7 +189,7 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
         return title;
     }
 
-    class MyTask extends AsyncTask<Void, String, Void> {
+    class FindTokensTask extends AsyncTask<Void, String, Void> {
         View view;
         TextView progressText;
         ProgressBar progressBar;
@@ -193,12 +197,11 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
         int distance;
         int minLine;
 
-        public MyTask(View view, int threshold, int distance, int minLine) {
+        public FindTokensTask(View view, int threshold, int distance, int minLine) {
             this.view = view;
             this.threshold = threshold;
             this.distance = distance;
             this.minLine = minLine;
-
         }
 
         @Override
@@ -254,6 +257,23 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
             // set the TextField for the amount of tokens
             ArrayList leafTokens = imgProc.getTokens();
             actualImage.setTokens(leafTokens);
+
+            ImageView imageView = view.findViewById(R.id.imageView);
+            BufferedImage bufferedImage= ImageProcessor.toBufferedImage(imgProc.getImage());
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            try {
+                ImageIO.write(bufferedImage, "png", baos);
+                baos.flush();
+                byte[] imageInByte = baos.toByteArray();
+                Bitmap bmp = BitmapFactory.decodeByteArray(imageInByte, 0, imageInByte.length);
+                getActivity().runOnUiThread(() -> imageView.setImageBitmap(bmp));
+            }
+                catch (IOException e) {
+                e.printStackTrace();
+            }
+
+//            imageView.setImageBitmap(ImageIO.read(new ByteArrayInputStream(bufferedImage.getData().)));
 
 //            updateProjectEnv();
 

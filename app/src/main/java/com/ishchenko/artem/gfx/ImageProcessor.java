@@ -32,11 +32,15 @@ import android.content.Context;
 import android.view.View;
 
 import net.windward.android.awt.*;
+import net.windward.android.awt.image.BufferedImage;
 import net.windward.android.awt.image.MemoryImageSource;
 import net.windward.android.awt.image.PixelGrabber;
+import net.windward.android.awt.image.RenderedImage;
+import net.windward.android.imageio.ImageIO;
 
 import org.apache.commons.imaging.formats.jpeg.segments.SofnSegment;
 
+import java.io.File;
 import java.util.*;
 
 import static net.windward.android.awt.Image.createImage;
@@ -112,6 +116,31 @@ public class ImageProcessor extends View {
         myImage = createImage(new MemoryImageSource(width, height, Pixels, 0, width));
 
         return myImage;
+    }
+
+    /**
+     * Converts a given Image into a BufferedImage
+     *
+     * @param img The Image to be converted
+     * @return The converted BufferedImage
+     */
+    public static BufferedImage toBufferedImage(Image img)
+    {
+        if (img instanceof BufferedImage)
+        {
+            return (BufferedImage) img;
+        }
+
+        // Create a buffered image with transparency
+        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+        // Draw the image on to the buffered image
+        Graphics2D bGr = bimage.createGraphics();
+        bGr.drawImage(img, 0, 0, null);
+        bGr.dispose();
+
+        // Return the buffered image
+        return bimage;
     }
 
     /**
