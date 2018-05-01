@@ -287,6 +287,7 @@ public class ProjectEnv
 
           attr.clear();
           attr.addAttribute(null, null, "file", null, limage.getFileName().getPath());
+//          attr.addAttribute(null, null, "imageBitmap", null, limage.getBitmap().toString());
           writer.startElement("leafImage", attr);
 
           for(int k=0; k < limage.numTokens(); k++)

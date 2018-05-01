@@ -28,6 +28,10 @@
 
 package com.ishchenko.artem.tools;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Environment;
+
 import com.ishchenko.artem.gfx.LeafImage;
 import com.ishchenko.artem.gfx.LeafSpecies;
 import com.ishchenko.artem.gfx.LeafToken;
@@ -48,8 +52,6 @@ import org.xml.sax.ContentHandler;
 public class XMLCfgReader implements ContentHandler
 {
   private ProjectEnv projectEnv;
-
-  private boolean correctVersion = false;
 
   private ArrayList leafSpecies;
 
@@ -100,15 +102,6 @@ public class XMLCfgReader implements ContentHandler
   {
     //System.out.println("startElement("+namespaceURI+", "+localName+", "+qName+")");
 
-    if(qName.compareToIgnoreCase("lrecog") == 0)
-    {
-      if(atts.getValue("version").compareToIgnoreCase("1.0") == 0)
-      {
-        correctVersion = true;
-      }
-    }
-    else if(correctVersion)
-    {
       if(qName.compareToIgnoreCase("leafSpecies") == 0)
       {
         actSpecies = new LeafSpecies(atts.getValue("name"));
@@ -125,16 +118,21 @@ public class XMLCfgReader implements ContentHandler
       }
       else if(qName.compareToIgnoreCase("leafImage") == 0)
       {
-        if(projectEnv.getCodeBase() == null)
-        {
-//          actImage = new LeafImage(new File(atts.getValue("file")));
-        }
-        else
-        {
+//        if(projectEnv.getCodeBase() == null)
+//        {
+          File sd = Environment.getExternalStorageDirectory();
+          String filePath = atts.getValue("file");
+          File image = new File(filePath);
+          BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+          Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
+          actImage = new LeafImage(bitmap , filePath);
+//        }
+//        else
+//        {
           // If the Application was started as a Applet we have to
           // get the image from the ImageChooser object
 //          actImage = projectE*/nv.getLeavesRecognition().getImageChooser().getLeafImage(atts.getValue("file"));
-        }
+//        }
       }
       else if(qName.compareToIgnoreCase("leafToken") == 0)
       {
@@ -185,14 +183,11 @@ public class XMLCfgReader implements ContentHandler
       {
         actBiasO = Double.parseDouble(atts.getValue("O"));
       }
-    }
   }
 
   public void endElement(String namespaceURI, String localName, String qName) throws SAXException
   {
     //System.out.println("endElement()");
-    if(correctVersion)
-    {
       if(qName.compareToIgnoreCase("leafSpecies") == 0 && actSpecies != null)
       {
         actSpecies.setID(actSpeciesID);
@@ -236,7 +231,6 @@ public class XMLCfgReader implements ContentHandler
       {
         actNetwork.setBiasO(actBiasO, numOutput);
       }
-    }
   }
 
   public void characters(char[] text, int start, int length) throws SAXException

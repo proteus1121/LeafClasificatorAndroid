@@ -10,7 +10,11 @@ import android.support.v4.view.ViewPager;
 
 import com.ishchenko.artem.tools.ProjectEnv;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -32,6 +36,16 @@ public class LeafClassifier extends FragmentActivity {
         File directory = getFilesDir();
         File file = new File(directory, CACHE_NAME);
         if (file.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    System.err.println(line);
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             projectEnv.Open(file);
         }
         setContentView(R.layout.activity_leaf_clasificator);
