@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.ishchenko.artem.gfx.ImageProcessor;
@@ -27,18 +28,27 @@ class FindTokensTask extends AsyncTask<Void, String, Void> {
     private View view;
     private TextView progressText;
     private ProgressBar progressBar;
+    private Button findTokens;
     private int threshold;
     private int distance;
     private int minLine;
     private LeafImage leafImage;
 
-    public FindTokensTask(ImageProcessingFragment imageProcessingFragment, View view, int threshold, int distance, int minLine, LeafImage leafImage) {
+    public FindTokensTask(ImageProcessingFragment imageProcessingFragment, View view, LeafImage leafImage) {
         this.imageProcessingFragment = imageProcessingFragment;
         this.view = view;
-        this.threshold = threshold;
-        this.distance = distance;
-        this.minLine = minLine;
+
+        SeekBar threshold = view.findViewById(R.id.threshold);
+        SeekBar distance = view.findViewById(R.id.distance);
+        SeekBar minLine = view.findViewById(R.id.minLine);
+        this.threshold = threshold.getProgress();
+        this.distance = distance.getProgress();
+        this.minLine = minLine.getProgress();
         this.leafImage = leafImage;
+
+        this.findTokens = view.findViewById(R.id.findTokens);
+        this.progressText = view.findViewById(R.id.progressText);
+        this.progressBar = view.findViewById(R.id.progressBar);
     }
 
     @Override
@@ -48,10 +58,6 @@ class FindTokensTask extends AsyncTask<Void, String, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-
-        Button findTokens = view.findViewById(R.id.findTokens);
-        progressText = view.findViewById(R.id.progressText);
-        progressBar = view.findViewById(R.id.progressBar);
 
         // first we disable the button
         imageProcessingFragment.getActivity().runOnUiThread(() -> findTokens.setEnabled(false));

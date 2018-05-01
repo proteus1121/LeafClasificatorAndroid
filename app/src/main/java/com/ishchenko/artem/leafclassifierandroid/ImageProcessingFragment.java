@@ -25,13 +25,12 @@ import com.ishchenko.artem.gfx.LeafSpecies;
 import com.vansuita.pickimage.bundle.PickSetup;
 import com.vansuita.pickimage.dialog.PickImageDialog;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
-
-import static com.ishchenko.artem.leafclassifierandroid.LeafClassifier.projectEnv;
 
 public class ImageProcessingFragment extends LeafClassifierFragment {
 
@@ -39,10 +38,7 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
     public static final String title = "Image processing";
 
     int pageNumber;
-    int backColor;
     ExpandableListView treePanel;
-//    List<Pair<String, List<String>>> spaces = new LinkedList<>();
-
 
     static ImageProcessingFragment newInstance(int page) {
         ImageProcessingFragment imageProcessingFragment = new ImageProcessingFragment();
@@ -58,7 +54,6 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
         pageNumber = getArguments().getInt(ARGUMENT_PAGE_NUMBER);
 
         Random rnd = new Random();
-        backColor = Color.argb(40, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -69,7 +64,7 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
 
         Button addImage = view.findViewById(R.id.addImage);
         treePanel = view.findViewById(R.id.treePanel);
-        List<Pair<String, List<String>>> spaces = projectEnv.getLeafSpecies().stream()
+        List<Pair<String, List<String>>> spaces = LeafClassifier.getProjectEnv().getLeafSpecies().stream()
                 .map(leafSpecies -> Pair.create(leafSpecies.getName(),
                         leafSpecies.getImages().stream().map(leafImage -> leafImage.getFileName().getName()).collect(Collectors.toList()))).collect(Collectors.toList());
         LeafAdapter adapter = new LeafAdapter(getContext(), spaces, view);
@@ -98,10 +93,10 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
                             LeafImage leafImage = new LeafImage(r.getBitmap(), r.getPath());
                             List<String> path = Arrays.asList(r.getPath().split("/"));
                             spaces.get(spaceId).second.add(path.get(path.size() - 1));
-                            projectEnv.getLeafSpecies().get(spaceId).addImage(leafImage);
+                            LeafClassifier.getProjectEnv().getLeafSpecies().get(spaceId).addImage(leafImage);
                             findTokensProcess(view, leafImage);
 
-                            projectEnv.setModified();
+                            LeafClassifier.getProjectEnv().setModified();
 
                         }).show(getActivity());
                     })
@@ -123,12 +118,20 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
                         String spaceName = classNameField.getText().toString();
                         LeafSpecies lSpecies = new LeafSpecies(spaceName);
                         spaces.add(Pair.create(spaceName, new LinkedList<>()));
-                        projectEnv.addLeafSpecies(lSpecies);
-                        projectEnv.setModified();
+                        LeafClassifier.getProjectEnv().addLeafSpecies(lSpecies);
+                        LeafClassifier.getProjectEnv().setModified();
                     })
                     .setNegativeButton("Cancel", (dialog, whichButton) -> {
                     })
                     .show();
+        });
+
+        Button save = view.findViewById(R.id.save);
+
+        save.setOnClickListener((e) -> {
+            File directory = view.getContext().getFilesDir();
+            File file = new File(directory, LeafClassifier.CACHE_NAME);
+            LeafClassifier.getProjectEnv().Save(file);
         });
 
         Button rename = view.findViewById(R.id.rename);
@@ -142,10 +145,7 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
     }
 
     private void findTokensProcess(View view, LeafImage leafImage) {
-        SeekBar threshold = view.findViewById(R.id.threshold);
-        SeekBar distance = view.findViewById(R.id.distance);
-        SeekBar minLine = view.findViewById(R.id.minLine);
-        new FindTokensTask(this, view, threshold.getProgress(), distance.getProgress(), minLine.getProgress(), leafImage).execute();
+        new FindTokensTask(this, view, leafImage).execute();
     }
 
     @Override

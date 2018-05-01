@@ -2,7 +2,6 @@ package com.ishchenko.artem.leafclassifierandroid;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,19 +10,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.ishchenko.artem.gfx.ImageProcessor;
-import com.ishchenko.artem.gfx.LeafSpecies;
-
-import net.windward.android.awt.Image;
-import net.windward.android.awt.image.BufferedImage;
-import net.windward.android.imageio.ImageIO;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
-
-import static com.ishchenko.artem.leafclassifierandroid.LeafClassifier.projectEnv;
 
 /**
  * Created by Artem on 08.04.2018.
@@ -113,7 +100,7 @@ public class LeafAdapter extends BaseExpandableListAdapter {
 
         ImageView imageView = view.findViewById(R.id.imageView);
         convertView.setOnClickListener(v -> {
-            Bitmap image = projectEnv.getLeafSpecies().get(groupPosition).getImage(childPosition).getBitmap();
+            Bitmap image = LeafClassifier.getProjectEnv().getLeafSpecies().get(groupPosition).getImage(childPosition).getBitmap();
 
             imageView.setImageBitmap(image);
 

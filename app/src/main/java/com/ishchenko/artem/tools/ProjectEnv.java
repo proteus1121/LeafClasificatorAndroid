@@ -193,7 +193,7 @@ public class ProjectEnv
       }
       catch (Exception ee)
       {
-        System.err.println("Couldn't locate a SAX parser");
+        e.printStackTrace();
         return false;
       }
     }
@@ -207,7 +207,7 @@ public class ProjectEnv
       InputStream fIn;
 
 
-        URL nURL = new URL(fileopen.toString());
+        URL nURL = new URL("file://" + fileopen.toString());
         fIn = nURL.openStream();
 
 
@@ -216,17 +216,16 @@ public class ProjectEnv
     catch(SAXParseException e)
     {
       // well-formedness error
-      System.out.println(fileopen+" is not well formed.");
-      System.out.println(e.getMessage()+" at line "+e.getLineNumber()+", column "+e.getColumnNumber());
+      e.printStackTrace();
     }
     catch(SAXException e)
     {
       // some other kind of error
-      System.out.println(e.getMessage());
+      e.printStackTrace();
     }
     catch(IOException e)
     {
-      System.out.println("Could not report on "+fileopen+" because of the IOException "+e);
+      e.printStackTrace();
     }
 
     // Now that we load the cfg we can set the new leafGroup
@@ -261,7 +260,7 @@ public class ProjectEnv
       // the reocgnized tokens
       for(int i=0; i < leafSpecies.size(); i++)
       {
-        LeafSpecies lSpecies = (LeafSpecies)leafSpecies.get(i);
+        LeafSpecies lSpecies = leafSpecies.get(i);
 
         attr.clear();
         attr.addAttribute(null, null, "name", null,  lSpecies.getName());
@@ -284,7 +283,7 @@ public class ProjectEnv
 
         for(int j=0; j < lSpecies.numImages(); j++)
         {
-          LeafImage limage = (LeafImage)lSpecies.getImage(j);
+          LeafImage limage = lSpecies.getImage(j);
 
           attr.clear();
           attr.addAttribute(null, null, "file", null, limage.getFileName().getPath());
@@ -381,9 +380,10 @@ public class ProjectEnv
     }
     catch(FileNotFoundException e)
     {
-      System.err.println("Error: File could not be open.");
+      e.printStackTrace();
     }
 
+    System.err.println("SAVED!!!");
     configfile = filesave;
     modified = false;
 

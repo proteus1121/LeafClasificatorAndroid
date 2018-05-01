@@ -1,18 +1,16 @@
 package com.ishchenko.artem.leafclassifierandroid;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 
 import com.ishchenko.artem.tools.ProjectEnv;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -21,40 +19,46 @@ public class LeafClassifier extends FragmentActivity {
 
     static final String TAG = "myLogs";
     static final int PAGE_COUNT = 3;
+    public static final String CACHE_NAME = "LeafRecognizingCache";
 
     ViewPager pager;
     PagerAdapter pagerAdapter;
-    public static ProjectEnv projectEnv;
+    private static ProjectEnv projectEnv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         projectEnv = new ProjectEnv(this);
         super.onCreate(savedInstanceState);
+        File directory = getFilesDir();
+        File file = new File(directory, CACHE_NAME);
+        if (file.exists()) {
+            projectEnv.Open(file);
+        }
         setContentView(R.layout.activity_leaf_clasificator);
 
         pager = findViewById(R.id.pager);
         pagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(pagerAdapter);
 
-        pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
-            @Override
-            public void onPageSelected(int position) {
-                Log.d(TAG, "onPageSelected, position = " + position);
-            }
-
-            @Override
-            public void onPageScrolled(int position, float positionOffset,
-                                       int positionOffsetPixels) {
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
-        });
+//        pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+//
+//            @Override
+//            public void onPageSelected(int position) {
+//                Log.d(TAG, "onPageSelected, position = " + position);
+//            }
+//
+//            @Override
+//            public void onPageScrolled(int position, float positionOffset,
+//                                       int positionOffsetPixels) {
+//            }
+//
+//            @Override
+//            public void onPageScrollStateChanged(int state) {
+//            }
+//        });
     }
 
-    public ProjectEnv getProjectEnv() {
+    public static ProjectEnv getProjectEnv() {
         return projectEnv;
     }
 
