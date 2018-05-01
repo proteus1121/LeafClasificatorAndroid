@@ -29,14 +29,12 @@
 package com.ishchenko.artem.gfx;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 import net.windward.android.awt.Image;
 import net.windward.android.imageio.ImageIO;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -86,6 +84,14 @@ public class LeafImage {
 
     public void setImage(Image img) {
         this.image = img;
+    }
+
+    public Bitmap getBitmap() {
+        return imageBitmap;
+    }
+
+    public void setBitmap(Bitmap btmp) {
+        imageBitmap = btmp;
     }
 
     public void setSpecies(LeafSpecies species) {

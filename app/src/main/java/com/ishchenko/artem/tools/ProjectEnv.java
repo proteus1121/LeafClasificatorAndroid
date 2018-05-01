@@ -68,7 +68,7 @@ public class ProjectEnv
   private Vector imageVector = null;
   private String imageDir = null;
   
-  private ArrayList leafSpecies;
+  private ArrayList<LeafSpecies> leafSpecies;
 
   // the neuronal network config
   private BackProp nNetwork = null;
@@ -79,7 +79,7 @@ public class ProjectEnv
   public ProjectEnv(LeafClassifier lrec)
   {
     this.lrec = lrec;
-    leafSpecies = new ArrayList(); // create a new List of Images
+    leafSpecies = new ArrayList<>(); // create a new List of Images
   }
 
   public void addLeafSpecies(LeafSpecies lSpecies)
@@ -92,7 +92,7 @@ public class ProjectEnv
     leafSpecies.remove(lSpecies);
   }
 
-  public ArrayList getLeafSpecies()
+  public ArrayList<LeafSpecies> getLeafSpecies()
   {
     return leafSpecies;
   }
@@ -108,7 +108,7 @@ public class ProjectEnv
 
     for(int i=0; i < leafSpecies.size(); i++)
     {
-      LeafSpecies lSpecies = (LeafSpecies)leafSpecies.get(i);
+      LeafSpecies lSpecies = leafSpecies.get(i);
 
       images += lSpecies.numImages();
     }

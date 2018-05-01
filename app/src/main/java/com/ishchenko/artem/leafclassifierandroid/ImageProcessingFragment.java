@@ -5,11 +5,10 @@ package com.ishchenko.artem.leafclassifierandroid;
  */
 
 import android.app.AlertDialog;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,28 +17,19 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Spinner;
-import android.widget.TextView;
 
-import com.ishchenko.artem.gfx.ImageProcessor;
 import com.ishchenko.artem.gfx.LeafImage;
 import com.ishchenko.artem.gfx.LeafSpecies;
 import com.vansuita.pickimage.bundle.PickSetup;
 import com.vansuita.pickimage.dialog.PickImageDialog;
 
-import net.windward.android.awt.image.BufferedImage;
-import net.windward.android.imageio.ImageIO;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static com.ishchenko.artem.leafclassifierandroid.LeafClassifier.projectEnv;
 
@@ -50,10 +40,8 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
 
     int pageNumber;
     int backColor;
-    LeafImage actualImage;
     ExpandableListView treePanel;
-    List<Pair<String, List<String>>> spaces = new LinkedList<>();
-    ;
+//    List<Pair<String, List<String>>> spaces = new LinkedList<>();
 
 
     static ImageProcessingFragment newInstance(int page) {
@@ -73,6 +61,7 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
         backColor = Color.argb(40, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -80,7 +69,10 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
 
         Button addImage = view.findViewById(R.id.addImage);
         treePanel = view.findViewById(R.id.treePanel);
-        LeafAdapter adapter = new LeafAdapter(getContext(), spaces);
+        List<Pair<String, List<String>>> spaces = projectEnv.getLeafSpecies().stream()
+                .map(leafSpecies -> Pair.create(leafSpecies.getName(),
+                        leafSpecies.getImages().stream().map(leafImage -> leafImage.getFileName().getName()).collect(Collectors.toList()))).collect(Collectors.toList());
+        LeafAdapter adapter = new LeafAdapter(getContext(), spaces, view);
         treePanel.setAdapter(adapter);
 
         addImage.setOnClickListener((e) -> {
@@ -101,44 +93,21 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
                     .setPositiveButton("Enter", (dialog, whichButton) -> {
                         int spaceId = classNameField.getSelectedItemPosition();
 
-
                         PickImageDialog.build(new PickSetup()).setOnPickResult(r -> {
 
-                            actualImage = new LeafImage(r.getBitmap(), r.getPath());
+                            LeafImage leafImage = new LeafImage(r.getBitmap(), r.getPath());
                             List<String> path = Arrays.asList(r.getPath().split("/"));
                             spaces.get(spaceId).second.add(path.get(path.size() - 1));
-                            ((LeafSpecies) projectEnv.getLeafSpecies().get(spaceId)).addImage(actualImage);
+                            projectEnv.getLeafSpecies().get(spaceId).addImage(leafImage);
+                            findTokensProcess(view, leafImage);
 
-//                if (lImage != null && lImage.getImage() != null) {
-                            // We add the leaf leafImage to the tree and to the
-                            // project enviroment
-//                LeafSpecies lSpecies = (LeafSpecies) treePanel.addChild(lImage);
-
-                            // now add this Leaf leafImage to the species
-//                if (lSpecies != null) {
-//                    lSpecies.addImage(lImage);
-//                }
                             projectEnv.setModified();
-//                lrec.updateProjectEnv();
-//                }
+
                         }).show(getActivity());
                     })
                     .setNegativeButton("Cancel", (dialog, whichButton) -> {
                     })
                     .show();
-
-
-//             Create a file chooser
-//                        JFileChooser fc = new JFileChooser();
-//                        fc.addChoosableFileFilter(new ImageFilter());
-//                        fc.setAccessory(new ImagePreview(fc));
-//
-//                        int returnVal = fc.showOpenDialog(lrec);
-////
-//                        if (returnVal == JFileChooser.APPROVE_OPTION) {
-//                            File file = fc.getSelectedFile();
-//
-//                        }
 
         });
 
@@ -155,7 +124,6 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
                         LeafSpecies lSpecies = new LeafSpecies(spaceName);
                         spaces.add(Pair.create(spaceName, new LinkedList<>()));
                         projectEnv.addLeafSpecies(lSpecies);
-
                         projectEnv.setModified();
                     })
                     .setNegativeButton("Cancel", (dialog, whichButton) -> {
@@ -165,23 +133,19 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
 
         Button rename = view.findViewById(R.id.rename);
         Button delete = view.findViewById(R.id.delete);
-        Button findTokens = view.findViewById(R.id.findTokens);
         SeekBar threshold = view.findViewById(R.id.threshold);
         SeekBar distance = view.findViewById(R.id.distance);
         SeekBar minLine = view.findViewById(R.id.minLine);
-        findTokens.setOnClickListener(e -> {
-            findTokensProcess(view);
-        });
+
 
         return view;
     }
 
-    private void findTokensProcess(View view) {
+    private void findTokensProcess(View view, LeafImage leafImage) {
         SeekBar threshold = view.findViewById(R.id.threshold);
         SeekBar distance = view.findViewById(R.id.distance);
         SeekBar minLine = view.findViewById(R.id.minLine);
-        new FindTokensTask(view, threshold.getProgress(), distance.getProgress(), minLine.getProgress()).execute();
-
+        new FindTokensTask(this, view, threshold.getProgress(), distance.getProgress(), minLine.getProgress(), leafImage).execute();
     }
 
     @Override
@@ -189,114 +153,4 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
         return title;
     }
 
-    class FindTokensTask extends AsyncTask<Void, String, Void> {
-        View view;
-        TextView progressText;
-        ProgressBar progressBar;
-        int threshold;
-        int distance;
-        int minLine;
-
-        public FindTokensTask(View view, int threshold, int distance, int minLine) {
-            this.view = view;
-            this.threshold = threshold;
-            this.distance = distance;
-            this.minLine = minLine;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            if (actualImage == null) {
-                return null;
-            }
-
-            Button findTokens = view.findViewById(R.id.findTokens);
-            progressText = view.findViewById(R.id.progressText);
-            progressBar = view.findViewById(R.id.progressBar);
-
-            // first we disable the button
-            getActivity().runOnUiThread(() -> findTokens.setEnabled(false));
-
-            // Now we perform the Image processing
-            ImageProcessor imgProc = new ImageProcessor(actualImage.getImage(), ImageProcessingFragment.this.getContext());
-
-//            imgControlBar.setValue(1);
-            publishProgress("Edge detection...", "5");
-//
-            imgProc.edgeDetect(threshold * 10);
-//            procImagePanel.setImage(imgProc.getImage(procIma gePanel));
-            publishProgress("Thinning...", "20");
-
-            imgProc.thinning();
-//            procImagePanel.setImage(imgProc.getImage(procImagePanel));
-            publishProgress("Line checking...", "40");
-
-//            lrec.refresh();
-            imgProc.checkLines(minLine * 10);
-            publishProgress("Distance points...", "60");
-
-//            lrec.setStatusField(getString("STATUS_DISTANCE"));
-//            lrec.refresh();
-            imgProc.markPoints(distance * 10);
-//            procImagePanel.setImage(imgProc.getImage(procImagePanel));
-            publishProgress("Searching tokens...", "80");
-
-            // now we calculate the tokens of the image by calculating
-            // the angles
-//            lrec.refresh();
-            imgProc.calcAngels();
-//            procImagePanel.setImage(imgProc.getImage(procImagePanel));
-//            imageView.setImageBitmap();setImage(imgProc.getImage());
-            publishProgress("finished.", "100");
-
-            // set the TextField for the amount of tokens
-            ArrayList leafTokens = imgProc.getTokens();
-            actualImage.setTokens(leafTokens);
-
-            ImageView imageView = view.findViewById(R.id.imageView);
-            BufferedImage bufferedImage= ImageProcessor.toBufferedImage(imgProc.getImage());
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            try {
-                ImageIO.write(bufferedImage, "png", baos);
-                baos.flush();
-                byte[] imageInByte = baos.toByteArray();
-                Bitmap bmp = BitmapFactory.decodeByteArray(imageInByte, 0, imageInByte.length);
-                getActivity().runOnUiThread(() -> imageView.setImageBitmap(bmp));
-            }
-                catch (IOException e) {
-                e.printStackTrace();
-            }
-
-//            imageView.setImageBitmap(ImageIO.read(new ByteArrayInputStream(bufferedImage.getData().)));
-
-//            updateProjectEnv();
-
-//            lrec.setStatusField(getString("STATUS_FINISHED"));
-
-            // at the end we enable the button again
-            getActivity().runOnUiThread(() -> findTokens.setEnabled(true));
-
-//            projectEnv.setModified();
-//            lrec.updateProjectEnv();
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-            super.onProgressUpdate(values);
-            progressText.setText(values[0]);
-            progressBar.setProgress(Integer.parseInt(values[1]));
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-        }
-    }
 }

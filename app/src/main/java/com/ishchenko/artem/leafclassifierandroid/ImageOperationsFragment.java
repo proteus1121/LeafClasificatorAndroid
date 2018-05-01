@@ -44,7 +44,7 @@ public class ImageOperationsFragment extends LeafClassifierFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.image_operations_fragment, null);
 
-        TextView tvPage = (TextView) view.findViewById(R.id.tvPage);
+        TextView tvPage = view.findViewById(R.id.tvPage);
         tvPage.setText("Page " + pageNumber);
         tvPage.setBackgroundColor(backColor);
 

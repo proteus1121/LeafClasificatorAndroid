@@ -1,15 +1,29 @@
 package com.ishchenko.artem.leafclassifierandroid;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ishchenko.artem.gfx.ImageProcessor;
+import com.ishchenko.artem.gfx.LeafSpecies;
+
+import net.windward.android.awt.Image;
+import net.windward.android.awt.image.BufferedImage;
+import net.windward.android.imageio.ImageIO;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import static com.ishchenko.artem.leafclassifierandroid.LeafClassifier.projectEnv;
 
 /**
  * Created by Artem on 08.04.2018.
@@ -19,10 +33,12 @@ public class LeafAdapter extends BaseExpandableListAdapter {
 
     private List<Pair<String, List<String>>> spaces;
     private Context mContext;
+    private View view;
 
-    public LeafAdapter(Context context, List<Pair<String, List<String>>> spaces) {
-        mContext = context;
+    public LeafAdapter(Context context, List<Pair<String, List<String>>> spaces, View view) {
+        this.mContext = context;
         this.spaces = spaces;
+        this.view = view;
     }
 
     @Override
@@ -67,6 +83,7 @@ public class LeafAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.group_view, null);
+
         }
 
         if (isExpanded) {
@@ -75,7 +92,7 @@ public class LeafAdapter extends BaseExpandableListAdapter {
             //Изменяем что-нибудь, если текущая Group скрыта
         }
 
-        TextView textGroup = (TextView) convertView.findViewById(R.id.textGroup);
+        TextView textGroup = convertView.findViewById(R.id.textGroup);
         textGroup.setText(spaces.get(groupPosition).first);
 
         return convertView;
@@ -91,7 +108,16 @@ public class LeafAdapter extends BaseExpandableListAdapter {
         }
 
         TextView textChild = convertView.findViewById(R.id.textChild);
-        textChild.setText(spaces.get(groupPosition).second.get(childPosition));
+        String imageName = spaces.get(groupPosition).second.get(childPosition);
+        textChild.setText(imageName);
+
+        ImageView imageView = view.findViewById(R.id.imageView);
+        convertView.setOnClickListener(v -> {
+            Bitmap image = projectEnv.getLeafSpecies().get(groupPosition).getImage(childPosition).getBitmap();
+
+            imageView.setImageBitmap(image);
+
+        });
 
         return convertView;
     }

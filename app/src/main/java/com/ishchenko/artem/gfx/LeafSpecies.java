@@ -37,13 +37,13 @@ import java.util.ArrayList;
 public class LeafSpecies
 {
   private String speciesName;
-  private ArrayList images = null;
+  private ArrayList<LeafImage> images;
   private double[] ID;
 
   public LeafSpecies(String name)
   {
     speciesName = name;
-    images = new ArrayList();
+    images = new ArrayList<>();
     ID = new double[0];
   }
 
@@ -62,9 +62,9 @@ public class LeafSpecies
     images.add(limage);
   }
 
-  public void removeImage(LeafImage limage)
+  public ArrayList<LeafImage> getImages()
   {
-    images.remove(limage);
+    return images;
   }
 
   public LeafImage getImage(int idx)
