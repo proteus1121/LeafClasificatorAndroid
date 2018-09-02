@@ -6,6 +6,6 @@ import android.support.v4.app.Fragment;
  * Created by Artem on 24.03.2018.
  */
 
-abstract class LeafClassifierFragment extends Fragment {
+abstract class AbstractLeafClassifierFragment extends Fragment {
     public abstract String getTitle();
 }

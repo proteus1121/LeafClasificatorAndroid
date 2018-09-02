@@ -17,6 +17,20 @@
             android:layout_alignParentTop="true"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/progressText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=" " />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:max="100" />
+
             <com.jjoe64.graphview.GraphView
                 android:id="@+id/graph"
                 android:layout_width="match_parent"
@@ -240,20 +254,6 @@
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
                 android:text="Train Network" />
-
-            <TextView
-                android:id="@+id/progressText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=" " />
-
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:max="100" />
         </LinearLayout>
 
     </ScrollView>

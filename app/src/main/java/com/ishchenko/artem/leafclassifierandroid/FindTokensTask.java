@@ -19,12 +19,13 @@ import net.windward.android.imageio.ImageIO;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.function.BiConsumer;
 
 /**
  * Created by Artem on 01.05.2018.
  */
 class FindTokensTask extends AsyncTask<Void, String, Void> {
-    private ImageProcessingFragment imageProcessingFragment;
+    private AbstractLeafClassifierFragment fragment;
     private View view;
     private TextView progressText;
     private ProgressBar progressBar;
@@ -34,8 +35,10 @@ class FindTokensTask extends AsyncTask<Void, String, Void> {
     private int minLine;
     private LeafImage leafImage;
 
-    public FindTokensTask(ImageProcessingFragment imageProcessingFragment, View view, LeafImage leafImage) {
-        this.imageProcessingFragment = imageProcessingFragment;
+    BiConsumer<String, String> publishProgress = (s, s2) -> publishProgress(s, s2);
+
+    public FindTokensTask(AbstractLeafClassifierFragment imageProcessingFragment, View view, LeafImage leafImage) {
+        this.fragment = imageProcessingFragment;
         this.view = view;
 
         SeekBar threshold = view.findViewById(R.id.threshold);
@@ -58,53 +61,11 @@ class FindTokensTask extends AsyncTask<Void, String, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-
         // first we disable the button
-        imageProcessingFragment.getActivity().runOnUiThread(() -> findTokens.setEnabled(false));
+        fragment.getActivity().runOnUiThread(() -> findTokens.setEnabled(false));
+        FindTokensUtils.findTokens(view, publishProgress, leafImage, fragment);
 
-        // Now we perform the Image processing
-        ImageProcessor imgProc = new ImageProcessor(leafImage.getImage(), imageProcessingFragment.getContext());
-
-        publishProgress("Edge detection...", "5");
-
-        imgProc.edgeDetect(threshold * 10);
-        publishProgress("Thinning...", "20");
-
-        imgProc.thinning();
-        publishProgress("Line checking...", "40");
-
-        imgProc.checkLines(minLine * 10);
-        publishProgress("Distance points...", "60");
-
-        imgProc.markPoints(distance * 10);
-        publishProgress("Searching tokens...", "80");
-
-        // now we calculate the tokens of the image by calculating
-        // the angles
-        imgProc.calcAngels();
-
-        publishProgress("finished.", "100");
-
-        // set the TextField for the amount of tokens
-        ArrayList leafTokens = imgProc.getTokens();
-        leafImage.setTokens(leafTokens);
-
-        ImageView imageView = view.findViewById(R.id.imageView);
-        BufferedImage bufferedImage = ImageProcessor.toBufferedImage(imgProc.getImage());
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
-            ImageIO.write(bufferedImage, "png", baos);
-            baos.flush();
-            byte[] imageInByte = baos.toByteArray();
-            Bitmap bmp = BitmapFactory.decodeByteArray(imageInByte, 0, imageInByte.length);
-            leafImage.setBitmap(bmp);
-            imageProcessingFragment.getActivity().runOnUiThread(() -> imageView.setImageBitmap(bmp));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        imageProcessingFragment.getActivity().runOnUiThread(() -> findTokens.setEnabled(true));
+        fragment.getActivity().runOnUiThread(() -> findTokens.setEnabled(true));
 
         return null;
     }

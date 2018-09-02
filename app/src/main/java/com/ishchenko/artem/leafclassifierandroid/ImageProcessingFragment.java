@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public class ImageProcessingFragment extends LeafClassifierFragment {
+public class ImageProcessingFragment extends AbstractLeafClassifierFragment {
 
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
     public static final String title = "Image processing";
@@ -52,8 +52,6 @@ public class ImageProcessingFragment extends LeafClassifierFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         pageNumber = getArguments().getInt(ARGUMENT_PAGE_NUMBER);
-
-        Random rnd = new Random();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)

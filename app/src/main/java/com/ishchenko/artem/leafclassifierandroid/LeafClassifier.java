@@ -78,7 +78,7 @@ public class LeafClassifier extends FragmentActivity {
 
     private class MyFragmentPagerAdapter extends FragmentPagerAdapter {
 
-        private final Map<Integer, LeafClassifierFragment> FRAGMENTS = new LinkedHashMap<>();
+        private final Map<Integer, AbstractLeafClassifierFragment> FRAGMENTS = new LinkedHashMap<>();
 
         private MyFragmentPagerAdapter(FragmentManager fm) {
             super(fm);

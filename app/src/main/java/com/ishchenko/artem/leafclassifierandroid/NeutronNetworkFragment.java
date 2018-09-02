@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-public class NeutronNetworkFragment extends LeafClassifierFragment {
+public class NeutronNetworkFragment extends AbstractLeafClassifierFragment {
 
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
     private static final String title = "Neutron Network";

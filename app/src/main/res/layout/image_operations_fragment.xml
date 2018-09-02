@@ -8,7 +8,6 @@
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -16,6 +15,20 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/progressText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=" " />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:max="100" />
 
             <ImageView
                 android:id="@+id/imageView"
@@ -106,7 +119,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:text="Recognize" />
-                    
+
                     <TextView
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -177,19 +190,13 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/progressText"
+            <TableLayout
+                android:id="@+id/probabilitiesTable"
+                xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=" " />
+                android:layout_height="match_parent">
+            </TableLayout>
 
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:max="100" />
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>
