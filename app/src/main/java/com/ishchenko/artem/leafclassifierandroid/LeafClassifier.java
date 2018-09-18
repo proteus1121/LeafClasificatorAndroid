@@ -20,8 +20,6 @@ import java.util.Map;
 
 
 public class LeafClassifier extends FragmentActivity {
-
-    static final String TAG = "myLogs";
     static final int PAGE_COUNT = 3;
     public static final String CACHE_NAME = "LeafRecognizingCache";
 
@@ -53,23 +51,6 @@ public class LeafClassifier extends FragmentActivity {
         pager = findViewById(R.id.pager);
         pagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(pagerAdapter);
-
-//        pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-//
-//            @Override
-//            public void onPageSelected(int position) {
-//                Log.d(TAG, "onPageSelected, position = " + position);
-//            }
-//
-//            @Override
-//            public void onPageScrolled(int position, float positionOffset,
-//                                       int positionOffsetPixels) {
-//            }
-//
-//            @Override
-//            public void onPageScrollStateChanged(int state) {
-//            }
-//        });
     }
 
     public static ProjectEnv getProjectEnv() {
@@ -82,9 +63,9 @@ public class LeafClassifier extends FragmentActivity {
 
         private MyFragmentPagerAdapter(FragmentManager fm) {
             super(fm);
-            FRAGMENTS.put(0, ImageProcessingFragment.newInstance(0));
-            FRAGMENTS.put(1, NeutronNetworkFragment.newInstance(1));
-            FRAGMENTS.put(2, ImageOperationsFragment.newInstance(2));
+            FRAGMENTS.put(0, ImageOperationsFragment.newInstance(0));
+            FRAGMENTS.put(1, ImageProcessingFragment.newInstance(1));
+            FRAGMENTS.put(2, NeutronNetworkFragment.newInstance(2));
         }
 
         @Override

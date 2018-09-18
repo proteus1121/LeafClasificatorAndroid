@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
     android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -114,11 +115,21 @@
                     android:orientation="vertical"
                     android:padding="10dip">
 
-                    <Button
+                    <mehdi.sakout.fancybuttons.FancyButton
                         android:id="@+id/recognize"
-                        android:layout_width="fill_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Recognize" />
+                        android:paddingBottom="10dp"
+                        android:paddingLeft="20dp"
+                        android:paddingRight="20dp"
+                        android:paddingTop="10dp"
+                        fancy:fb_borderColor="#FFFFFF"
+                        fancy:fb_borderWidth="1dp"
+                        fancy:fb_defaultColor="#7ab800"
+                        fancy:fb_focusColor="#9bd823"
+                        fancy:fb_radius="30dp"
+                        fancy:fb_text="Recognize"
+                        fancy:fb_textColor="#FFFFFF" />
 
                     <TextView
                         android:layout_width="fill_parent"

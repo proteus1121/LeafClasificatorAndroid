@@ -27,6 +27,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import mehdi.sakout.fancybuttons.FancyButton;
+
 public class ImageOperationsFragment extends AbstractLeafClassifierFragment {
 
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
@@ -54,7 +56,7 @@ public class ImageOperationsFragment extends AbstractLeafClassifierFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.image_operations_fragment, null);
         Button addImage = view.findViewById(R.id.addImage);
-        Button recognizeImage = view.findViewById(R.id.recognize);
+        FancyButton recognizeImage = view.findViewById(R.id.recognize);
         ImageView imageView = view.findViewById(R.id.imageView);
 
         addImage.setOnClickListener((e) -> {
