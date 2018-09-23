@@ -1,7 +1,6 @@
 package com.ishchenko.artem.leafclassifierandroid;
 
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -14,7 +13,11 @@ import com.ishchenko.artem.gfx.LeafSpecies;
 import com.ishchenko.artem.nnetwork.BackProp;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.BiConsumer;
+
+import static java.util.Collections.reverseOrder;
 
 public class RecognitionTask extends AsyncTask<Void, String, Void> {
     private View view;
@@ -42,8 +45,6 @@ public class RecognitionTask extends AsyncTask<Void, String, Void> {
             tableLayout.addView(row, new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT));
         });
 
-        FindTokensUtils.findTokens(view, publishProgress, leafImageForRecognizing, fragment);
-
         // Now we recognize the image with the trained neutronal network
         BackProp nNetwork = LeafClassifier.getProjectEnv().getNetwork();
 
@@ -62,6 +63,9 @@ public class RecognitionTask extends AsyncTask<Void, String, Void> {
         double error = 0.0;
 
         int size = leafSpecies.size();
+
+        TreeMap<String, Double> results = new TreeMap<>();
+
         for (int i = 0; i < size; i++, error = 0.0) {
             LeafSpecies lSpecies = (LeafSpecies) leafSpecies.get(i);
 
@@ -78,17 +82,18 @@ public class RecognitionTask extends AsyncTask<Void, String, Void> {
 
             }
             double probabilityValue = (100.0 - (100 / size) * error);
-            String probability = String.format("%.2f", probabilityValue);
-            TableRow row = getTableRow(lSpecies.getName(), probability);
+            results.put(lSpecies.getName(), probabilityValue);
+        }
 
+        results.entrySet().stream().
+                sorted(reverseOrder(Map.Entry.comparingByValue())).forEach((entry) -> {
+            TableRow row = getTableRow(entry.getKey(), String.format("%.2f", entry.getValue()));
             fragment.getActivity().runOnUiThread(() -> {
                 tableLayout.addView(row, new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT));
             });
-        }
-
+        });
         publishProgress("finished.", "100");
 
-//        imageTokenField.setText("" + actualImage.numTokens());
         return null;
     }
 

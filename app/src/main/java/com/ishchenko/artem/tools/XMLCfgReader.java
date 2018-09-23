@@ -118,21 +118,12 @@ public class XMLCfgReader implements ContentHandler
       }
       else if(qName.compareToIgnoreCase("leafImage") == 0)
       {
-//        if(projectEnv.getCodeBase() == null)
-//        {
-          File sd = Environment.getExternalStorageDirectory();
           String filePath = atts.getValue("file");
           File image = new File(filePath);
           BitmapFactory.Options bmOptions = new BitmapFactory.Options();
           Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
           actImage = new LeafImage(bitmap , filePath);
-//        }
-//        else
-//        {
-          // If the Application was started as a Applet we have to
-          // get the image from the ImageChooser object
-//          actImage = projectE*/nv.getLeavesRecognition().getImageChooser().getLeafImage(atts.getValue("file"));
-//        }
+          actImage.setSpecies(actSpecies);
       }
       else if(qName.compareToIgnoreCase("leafToken") == 0)
       {

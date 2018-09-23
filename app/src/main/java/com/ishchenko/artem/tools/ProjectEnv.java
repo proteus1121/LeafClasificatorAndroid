@@ -206,25 +206,13 @@ public class ProjectEnv
     {
       InputStream fIn;
 
-
         URL nURL = new URL("file://" + fileopen.toString());
         fIn = nURL.openStream();
 
-
       parser.parse(new InputSource(fIn));
-    }
-    catch(SAXParseException e)
-    {
-      // well-formedness error
-      e.printStackTrace();
-    }
-    catch(SAXException e)
+    } catch(SAXException | IOException e)
     {
       // some other kind of error
-      e.printStackTrace();
-    }
-    catch(IOException e)
-    {
       e.printStackTrace();
     }
 

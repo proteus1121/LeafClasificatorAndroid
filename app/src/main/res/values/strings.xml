@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">LeafClasificatorAndroid</string>
+    <string name="BYTES">bytes</string>
 </resources>

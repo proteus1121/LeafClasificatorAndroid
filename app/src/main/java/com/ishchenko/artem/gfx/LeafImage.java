@@ -59,29 +59,6 @@ public class LeafImage {
         tokens = new ArrayList();
     }
 
-//  public LeafImage(URL urlopen)
-//  {
-//    try {
-//      image = ImageIO.read(urlopen);
-//    } catch (IOException e) {
-//      e.printStackTrace();
-//    }
-//    tokens = new ArrayList();
-//  }
-
-//  public LeafImage(Image img)
-//  {
-//    image = img;
-//    tokens = new ArrayList();
-//  }
-
-//  public LeafImage(Image img, String filename)
-//  {
-//    this(img);
-//
-//    this.filename = new File(filename);
-//  }
-
     public void setImage(Image img) {
         this.image = img;
     }

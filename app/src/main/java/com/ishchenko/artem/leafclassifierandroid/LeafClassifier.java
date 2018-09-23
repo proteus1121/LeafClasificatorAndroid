@@ -12,7 +12,6 @@ import com.ishchenko.artem.tools.ProjectEnv;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -39,8 +38,6 @@ public class LeafClassifier extends FragmentActivity {
                 while ((line = br.readLine()) != null) {
                     System.err.println(line);
                 }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -63,8 +60,8 @@ public class LeafClassifier extends FragmentActivity {
 
         private MyFragmentPagerAdapter(FragmentManager fm) {
             super(fm);
-            FRAGMENTS.put(0, ImageOperationsFragment.newInstance(0));
-            FRAGMENTS.put(1, ImageProcessingFragment.newInstance(1));
+            FRAGMENTS.put(0, LeafRecognizingFragment.newInstance(0));
+            FRAGMENTS.put(1, LeafLibraryFragment.newInstance(1));
             FRAGMENTS.put(2, NeutronNetworkFragment.newInstance(2));
         }
 

@@ -5,7 +5,6 @@ package com.ishchenko.artem.leafclassifierandroid;
  */
 
 import android.app.AlertDialog;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -16,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -29,23 +29,24 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
-public class ImageProcessingFragment extends AbstractLeafClassifierFragment {
+import mehdi.sakout.fancybuttons.FancyButton;
+
+public class LeafLibraryFragment extends AbstractLeafClassifierFragment {
 
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
-    public static final String title = "Image processing";
+    public static final String title = "Leaf Library";
 
     int pageNumber;
     ExpandableListView treePanel;
 
-    static ImageProcessingFragment newInstance(int page) {
-        ImageProcessingFragment imageProcessingFragment = new ImageProcessingFragment();
+    static LeafLibraryFragment newInstance(int page) {
+        LeafLibraryFragment leafLibraryFragment = new LeafLibraryFragment();
         Bundle arguments = new Bundle();
         arguments.putInt(ARGUMENT_PAGE_NUMBER, page);
-        imageProcessingFragment.setArguments(arguments);
-        return imageProcessingFragment;
+        leafLibraryFragment.setArguments(arguments);
+        return leafLibraryFragment;
     }
 
     @Override
@@ -58,53 +59,16 @@ public class ImageProcessingFragment extends AbstractLeafClassifierFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.image_proceesing_fragment, null);
+        View view = inflater.inflate(R.layout.leaf_library_fragment, null);
 
-        Button addImage = view.findViewById(R.id.addImage);
         treePanel = view.findViewById(R.id.treePanel);
         List<Pair<String, List<String>>> spaces = LeafClassifier.getProjectEnv().getLeafSpecies().stream()
                 .map(leafSpecies -> Pair.create(leafSpecies.getName(),
                         leafSpecies.getImages().stream().map(leafImage -> leafImage.getFileName().getName()).collect(Collectors.toList()))).collect(Collectors.toList());
-        LeafAdapter adapter = new LeafAdapter(getContext(), spaces, view);
+        LeafAdapter adapter = new LeafAdapter(this, spaces, treePanel);
         treePanel.setAdapter(adapter);
 
-        addImage.setOnClickListener((e) -> {
-
-            String[] spacesNames = new String[spaces.size()];
-            for (int i = 0; i < spaces.size(); i++) {
-                spacesNames[i] = spaces.get(i).first;
-            }
-            ArrayAdapter<String> adapterArray = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, spacesNames);
-            adapterArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            Spinner classNameField = new Spinner(getContext());
-            classNameField.setAdapter(adapterArray);
-
-            new AlertDialog.Builder(this.getContext())
-                    .setTitle("Choose a class")
-                    .setMessage("Please choose a class for a leaf:")
-                    .setView(classNameField)
-                    .setPositiveButton("Enter", (dialog, whichButton) -> {
-                        int spaceId = classNameField.getSelectedItemPosition();
-
-                        PickImageDialog.build(new PickSetup()).setOnPickResult(r -> {
-
-                            LeafImage leafImage = new LeafImage(r.getBitmap(), r.getPath());
-                            List<String> path = Arrays.asList(r.getPath().split("/"));
-                            spaces.get(spaceId).second.add(path.get(path.size() - 1));
-                            LeafClassifier.getProjectEnv().getLeafSpecies().get(spaceId).addImage(leafImage);
-                            findTokensProcess(view, leafImage);
-
-                            LeafClassifier.getProjectEnv().setModified();
-
-                        }).show(getActivity());
-                    })
-                    .setNegativeButton("Cancel", (dialog, whichButton) -> {
-                    })
-                    .show();
-
-        });
-
-        Button addSpace = view.findViewById(R.id.addSpace);
+        FancyButton addSpace = view.findViewById(R.id.addSpace);
 
         addSpace.setOnClickListener((e) -> {
             EditText classNameField = new EditText(this.getContext());
@@ -132,23 +96,11 @@ public class ImageProcessingFragment extends AbstractLeafClassifierFragment {
             LeafClassifier.getProjectEnv().Save(file);
         });
 
-        Button rename = view.findViewById(R.id.rename);
-        Button delete = view.findViewById(R.id.delete);
-        SeekBar threshold = view.findViewById(R.id.threshold);
-        SeekBar distance = view.findViewById(R.id.distance);
-        SeekBar minLine = view.findViewById(R.id.minLine);
-
-
         return view;
-    }
-
-    private void findTokensProcess(View view, LeafImage leafImage) {
-        new FindTokensTask(this, view, leafImage).execute();
     }
 
     @Override
     public String getTitle() {
         return title;
     }
-
 }

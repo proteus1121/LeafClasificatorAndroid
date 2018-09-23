@@ -4,45 +4,33 @@ package com.ishchenko.artem.leafclassifierandroid;
  * Created by Artem on 24.03.2018.
  */
 
-import android.app.AlertDialog;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.ishchenko.artem.gfx.ImageProcessor;
 import com.ishchenko.artem.gfx.LeafImage;
 import com.vansuita.pickimage.bundle.PickSetup;
 import com.vansuita.pickimage.dialog.PickImageDialog;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-
 import mehdi.sakout.fancybuttons.FancyButton;
 
-public class ImageOperationsFragment extends AbstractLeafClassifierFragment {
+public class LeafRecognizingFragment extends AbstractLeafClassifierFragment {
 
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
-    private static final String title = "Image operations";
+    private static final String title = "Leaf Recognizing";
 
     int pageNumber;
     LeafImage leafImageForRecognizing;
 
-    static ImageOperationsFragment newInstance(int page) {
-        ImageOperationsFragment imageProcessingFragment = new ImageOperationsFragment();
+    static LeafRecognizingFragment newInstance(int page) {
+        LeafRecognizingFragment leafRecognizingFragment = new LeafRecognizingFragment();
         Bundle arguments = new Bundle();
         arguments.putInt(ARGUMENT_PAGE_NUMBER, page);
-        imageProcessingFragment.setArguments(arguments);
-        return imageProcessingFragment;
+        leafRecognizingFragment.setArguments(arguments);
+        return leafRecognizingFragment;
     }
 
     @Override
@@ -54,9 +42,10 @@ public class ImageOperationsFragment extends AbstractLeafClassifierFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.image_operations_fragment, null);
-        Button addImage = view.findViewById(R.id.addImage);
+        View view = inflater.inflate(R.layout.leaf_recognizing_fragment, null);
+        FancyButton addImage = view.findViewById(R.id.addImage);
         FancyButton recognizeImage = view.findViewById(R.id.recognize);
+        FancyButton findTokens = view.findViewById(R.id.findTokens);
         ImageView imageView = view.findViewById(R.id.imageView);
 
         addImage.setOnClickListener((e) -> {
@@ -66,6 +55,10 @@ public class ImageOperationsFragment extends AbstractLeafClassifierFragment {
             }).show(getActivity());
 
             LeafClassifier.getProjectEnv().setModified();
+        });
+
+        findTokens.setOnClickListener((e) -> {
+            new FindTokensTask(this, view, leafImageForRecognizing).execute();
         });
 
         recognizeImage.setOnClickListener((e) -> {

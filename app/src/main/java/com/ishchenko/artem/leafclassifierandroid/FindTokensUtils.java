@@ -27,6 +27,7 @@ public class FindTokensUtils {
         SeekBar threshold = view.findViewById(R.id.threshold);
         SeekBar distance = view.findViewById(R.id.distance);
         SeekBar minLine = view.findViewById(R.id.minLine);
+        ImageView imageView = view.findViewById(R.id.imageView);
 
         publishProgress.accept("Edge detection...", "5");
         imgProc.edgeDetect(threshold.getProgress() * 10);
@@ -49,7 +50,6 @@ public class FindTokensUtils {
         // set the TextField for the amount of tokens
         ArrayList leafTokens = imgProc.getTokens();
         leafImage.setTokens(leafTokens);
-        ImageView imageView = view.findViewById(R.id.imageView);
 
         BufferedImage bufferedImage = ImageProcessor.toBufferedImage(imgProc.getImage());
 
@@ -64,5 +64,6 @@ public class FindTokensUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        publishProgress.accept("finished.", "100");
     }
 }

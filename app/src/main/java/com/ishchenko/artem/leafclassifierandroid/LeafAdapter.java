@@ -1,15 +1,29 @@
 package com.ishchenko.artem.leafclassifierandroid;
 
+import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.support.v4.app.FragmentActivity;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.ishchenko.artem.gfx.LeafImage;
+import com.ishchenko.artem.gfx.LeafSpecies;
+import com.vansuita.pickimage.bundle.PickSetup;
+import com.vansuita.pickimage.dialog.PickImageDialog;
+
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -20,10 +34,12 @@ public class LeafAdapter extends BaseExpandableListAdapter {
 
     private List<Pair<String, List<String>>> spaces;
     private Context mContext;
-    private View view;
+    private ExpandableListView view;
+    private AbstractLeafClassifierFragment fragment;
 
-    public LeafAdapter(Context context, List<Pair<String, List<String>>> spaces, View view) {
-        this.mContext = context;
+    public LeafAdapter(AbstractLeafClassifierFragment fragment, List<Pair<String, List<String>>> spaces, ExpandableListView view) {
+        this.fragment = fragment;
+        this.mContext = fragment.getContext();
         this.spaces = spaces;
         this.view = view;
     }
@@ -70,17 +86,41 @@ public class LeafAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.group_view, null);
-
         }
 
-        if (isExpanded) {
-            //Изменяем что-нибудь, если текущая Group раскрыта
-        } else {
-            //Изменяем что-нибудь, если текущая Group скрыта
-        }
+        convertView.setOnClickListener(v -> {
+            if (isExpanded) {
+                view.collapseGroup(groupPosition);
+            } else {
+                view.expandGroup(groupPosition);
+            }
+        });
 
         TextView textGroup = convertView.findViewById(R.id.textGroup);
         textGroup.setText(spaces.get(groupPosition).first);
+        TextView classText = fragment.getView().findViewById(R.id.classText);
+
+        Button addInSpace = convertView.findViewById(R.id.add_in_space);
+
+        addInSpace.setOnClickListener((e) -> {
+            PickImageDialog.build(new PickSetup()).setOnPickResult(r -> {
+
+                LeafImage leafImage = new LeafImage(r.getBitmap(), r.getPath());
+                List<String> path = Arrays.asList(r.getPath().split("/"));
+                spaces.get(groupPosition).second.add(path.get(path.size() - 1));
+                LeafSpecies leafSpecies = LeafClassifier.getProjectEnv().getLeafSpecies().get(groupPosition);
+                leafSpecies.addImage(leafImage);
+                leafImage.setSpecies(leafSpecies);
+                new FindTokensTask(fragment, fragment.getView(), leafImage).execute();
+                classText.setText(leafImage.getSpecies().getName());
+                LeafClassifier.getProjectEnv().setModified();
+
+            }).show(fragment.getActivity());
+
+        });
+
+        Button editSpace = convertView.findViewById(R.id.edit_space);
+        Button deleteSpace = convertView.findViewById(R.id.delete_space);
 
         return convertView;
 
@@ -98,12 +138,16 @@ public class LeafAdapter extends BaseExpandableListAdapter {
         String imageName = spaces.get(groupPosition).second.get(childPosition);
         textChild.setText(imageName);
 
-        ImageView imageView = view.findViewById(R.id.imageView);
+        ImageView imageView = fragment.getView().findViewById(R.id.imageView);
+        TextView classText = fragment.getView().findViewById(R.id.classText);
+        TextView nameText = fragment.getView().findViewById(R.id.nameText);
+        TextView sizeText = fragment.getView().findViewById(R.id.sizeText);
+        TextView tokensText = fragment.getView().findViewById(R.id.tokensText);
         convertView.setOnClickListener(v -> {
-            Bitmap image = LeafClassifier.getProjectEnv().getLeafSpecies().get(groupPosition).getImage(childPosition).getBitmap();
-
+            LeafImage leaf = LeafClassifier.getProjectEnv().getLeafSpecies().get(groupPosition).getImage(childPosition);
+            Bitmap image = leaf.getBitmap();
+            updateLeafInfo(leaf, nameText, sizeText, tokensText, classText);
             imageView.setImageBitmap(image);
-
         });
 
         return convertView;
@@ -112,5 +156,13 @@ public class LeafAdapter extends BaseExpandableListAdapter {
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
+    }
+
+    private void updateLeafInfo(LeafImage leafImageForRecognizing, TextView nameText, TextView sizeText, TextView tokensText, TextView classText){
+        nameText.setText(leafImageForRecognizing.getFileName().getName());
+        sizeText.setText(String.valueOf(leafImageForRecognizing.getFileName().length()) + " " + fragment.getString(R.string.BYTES));
+        tokensText.setText(String.valueOf(leafImageForRecognizing.numTokens()));
+        nameText.setText(leafImageForRecognizing.getFileName().getName());
+        classText.setText(leafImageForRecognizing.getSpecies().getName());
     }
 }

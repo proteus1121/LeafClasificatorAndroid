@@ -1,25 +1,15 @@
 package com.ishchenko.artem.leafclassifierandroid;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.ishchenko.artem.gfx.ImageProcessor;
 import com.ishchenko.artem.gfx.LeafImage;
 
-import net.windward.android.awt.image.BufferedImage;
-import net.windward.android.imageio.ImageIO;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.function.BiConsumer;
+
+import mehdi.sakout.fancybuttons.FancyButton;
 
 /**
  * Created by Artem on 01.05.2018.
@@ -29,24 +19,14 @@ class FindTokensTask extends AsyncTask<Void, String, Void> {
     private View view;
     private TextView progressText;
     private ProgressBar progressBar;
-    private Button findTokens;
-    private int threshold;
-    private int distance;
-    private int minLine;
+    private FancyButton findTokens;
     private LeafImage leafImage;
 
     BiConsumer<String, String> publishProgress = (s, s2) -> publishProgress(s, s2);
 
-    public FindTokensTask(AbstractLeafClassifierFragment imageProcessingFragment, View view, LeafImage leafImage) {
-        this.fragment = imageProcessingFragment;
+    public FindTokensTask(AbstractLeafClassifierFragment fragment, View view, LeafImage leafImage) {
+        this.fragment = fragment;
         this.view = view;
-
-        SeekBar threshold = view.findViewById(R.id.threshold);
-        SeekBar distance = view.findViewById(R.id.distance);
-        SeekBar minLine = view.findViewById(R.id.minLine);
-        this.threshold = threshold.getProgress();
-        this.distance = distance.getProgress();
-        this.minLine = minLine.getProgress();
         this.leafImage = leafImage;
 
         this.findTokens = view.findViewById(R.id.findTokens);
@@ -67,6 +47,10 @@ class FindTokensTask extends AsyncTask<Void, String, Void> {
 
         fragment.getActivity().runOnUiThread(() -> findTokens.setEnabled(true));
 
+        TextView nameText = view.findViewById(R.id.nameText);
+        TextView sizeText = view.findViewById(R.id.sizeText);
+        TextView tokensText = view.findViewById(R.id.tokensText);
+        fragment.getActivity().runOnUiThread(() -> updateLeafInfo(leafImage, nameText, sizeText, tokensText));
         return null;
     }
 
@@ -80,5 +64,12 @@ class FindTokensTask extends AsyncTask<Void, String, Void> {
     @Override
     protected void onPostExecute(Void result) {
         super.onPostExecute(result);
+    }
+
+    private void updateLeafInfo(LeafImage leafImageForRecognizing, TextView nameText, TextView sizeText, TextView tokensText){
+        nameText.setText(leafImageForRecognizing.getFileName().getName());
+        sizeText.setText(String.valueOf(leafImageForRecognizing.getFileName().length()) + " " + fragment.getString(R.string.BYTES));
+        tokensText.setText(String.valueOf(leafImageForRecognizing.numTokens()));
+        nameText.setText(leafImageForRecognizing.getFileName().getName());
     }
 }

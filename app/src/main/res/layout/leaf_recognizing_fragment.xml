@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
     android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,7 +9,6 @@
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -31,42 +31,31 @@
                 android:layout_weight="1"
                 android:max="100" />
 
-            <ExpandableListView
-                android:id="@+id/treePanel"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_weight="1" />
-
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="250dp"
                 android:layout_weight="1"
-                android:background="@color/colorPrimaryDark" />
+                android:background="@color/white" />
 
-            <Button
+            <mehdi.sakout.fancybuttons.FancyButton
                 android:id="@+id/addImage"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Add Image" />
-
-            <Button
-                android:id="@+id/addSpace"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Add Space" />
-
-            <Button
-                android:id="@+id/rename"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Rename" />
-
-            <Button
-                android:id="@+id/delete"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Delete" />
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="10dp"
+                fancy:fb_borderColor="#FFFFFF"
+                fancy:fb_borderWidth="1dp"
+                fancy:fb_defaultColor="#7ab800"
+                fancy:fb_focusColor="#9bd823"
+                fancy:fb_radius="30dp"
+                fancy:fb_text="Load Image"
+                fancy:fb_textColor="#FFFFFF" />
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -86,7 +75,7 @@
                         android:layout_height="wrap_content"
                         android:adjustViewBounds="true"
                         android:scaleType="fitCenter"
-                        android:text="Image Operations" />
+                        android:text="Image Info" />
 
                     <TextView
                         android:layout_width="fill_parent"
@@ -101,13 +90,6 @@
                         android:adjustViewBounds="true"
                         android:scaleType="fitCenter"
                         android:text="Size: " />
-
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitCenter"
-                        android:text="Class: " />
 
                     <TextView
                         android:layout_width="fill_parent"
@@ -137,11 +119,25 @@
                         android:scaleType="fitCenter"
                         android:text="min. Line: " />
 
-                    <Button
+                    <mehdi.sakout.fancybuttons.FancyButton
                         android:id="@+id/findTokens"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:text="Find Tokens" />
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="5dp"
+                        android:paddingBottom="10dp"
+                        android:paddingLeft="20dp"
+                        android:paddingRight="20dp"
+                        android:paddingTop="10dp"
+                        fancy:fb_borderColor="#FFFFFF"
+                        fancy:fb_borderWidth="1dp"
+                        fancy:fb_defaultColor="#7ab800"
+                        fancy:fb_focusColor="#9bd823"
+                        fancy:fb_radius="30dp"
+                        fancy:fb_text="Find Tokens"
+                        fancy:fb_textColor="#FFFFFF" />
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -159,6 +155,7 @@
                         android:text=" " />
 
                     <TextView
+                        android:id="@+id/nameText"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:adjustViewBounds="true"
@@ -166,6 +163,7 @@
                         android:text=" " />
 
                     <TextView
+                        android:id="@+id/sizeText"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:adjustViewBounds="true"
@@ -173,13 +171,7 @@
                         android:text=" " />
 
                     <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitCenter"
-                        android:text=" " />
-
-                    <TextView
+                        android:id="@+id/tokensText"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:adjustViewBounds="true"
@@ -216,25 +208,33 @@
                         android:progress="2"
                         android:scaleType="fitCenter" />
 
-                    <Button
-                        android:id="@+id/reset"
+                    <mehdi.sakout.fancybuttons.FancyButton
+                        android:id="@+id/recognize"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitCenter"
-                        android:text="Reset" />
-
-                    <Button
-                        android:id="@+id/save"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitCenter"
-                        android:text="Save state" />
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="5dp"
+                        android:paddingBottom="10dp"
+                        android:paddingLeft="20dp"
+                        android:paddingRight="20dp"
+                        android:paddingTop="10dp"
+                        fancy:fb_borderColor="#FFFFFF"
+                        fancy:fb_borderWidth="1dp"
+                        fancy:fb_defaultColor="#7ab800"
+                        fancy:fb_focusColor="#9bd823"
+                        fancy:fb_radius="30dp"
+                        fancy:fb_text="Recognize"
+                        fancy:fb_textColor="#FFFFFF" />
 
                 </LinearLayout>
 
             </LinearLayout>
+
+            <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/probabilitiesTable"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"></TableLayout>
 
         </LinearLayout>
     </ScrollView>
