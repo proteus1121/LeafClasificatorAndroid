@@ -30,17 +30,23 @@ package com.ishchenko.artem.gfx;
 
 import android.graphics.Bitmap;
 
+import com.ishchenko.artem.tools.Utils;
+
 import net.windward.android.awt.Image;
 import net.windward.android.imageio.ImageIO;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+
+import lombok.EqualsAndHashCode;
 
 /**
  * class that represents a image of a single leaf with all
  * tokens and information about this image.
  */
+@EqualsAndHashCode
 public class LeafImage {
     private Image image = null;
     private Bitmap imageBitmap = null;
@@ -147,14 +153,20 @@ public class LeafImage {
         return new File(filename);
     }
 
-    /**
-     * toString() method
-     *
-     * this method is needed for the JTree to display the correct name
-     * of this object
-     */
-//  public String toString()
-//  {
-//    return filename.getName();
-//  }
+    public String getName() {
+        return filename;
+    }
+
+    public void setName(String filename) {
+        File oldFileName = getFileName();
+        String newFileName = getFileName().getParent() + File.separator + filename + Utils.getFileExtension(oldFileName);
+        File newFile = new File(newFileName);
+        oldFileName.renameTo(newFile);
+        try {
+            image = ImageIO.read(newFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.filename = newFileName;
+    }
 }

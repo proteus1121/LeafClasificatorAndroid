@@ -22,6 +22,7 @@ import android.widget.Spinner;
 
 import com.ishchenko.artem.gfx.LeafImage;
 import com.ishchenko.artem.gfx.LeafSpecies;
+import com.ishchenko.artem.tools.LeafSpaceContainer;
 import com.vansuita.pickimage.bundle.PickSetup;
 import com.vansuita.pickimage.dialog.PickImageDialog;
 
@@ -62,9 +63,11 @@ public class LeafLibraryFragment extends AbstractLeafClassifierFragment {
         View view = inflater.inflate(R.layout.leaf_library_fragment, null);
 
         treePanel = view.findViewById(R.id.treePanel);
-        List<Pair<String, List<String>>> spaces = LeafClassifier.getProjectEnv().getLeafSpecies().stream()
-                .map(leafSpecies -> Pair.create(leafSpecies.getName(),
-                        leafSpecies.getImages().stream().map(leafImage -> leafImage.getFileName().getName()).collect(Collectors.toList()))).collect(Collectors.toList());
+        List<LeafSpaceContainer> spaces = LeafClassifier.getProjectEnv().getLeafSpecies().stream()
+                .map(leafSpecies -> {
+                    List<String> leafNames = leafSpecies.getImages().stream().map(leafImage -> leafImage.getFileName().getName()).collect(Collectors.toList());
+                    return new LeafSpaceContainer(leafSpecies.getName(), leafNames);
+                }).collect(Collectors.toList());
         LeafAdapter adapter = new LeafAdapter(this, spaces, treePanel);
         treePanel.setAdapter(adapter);
 
@@ -79,7 +82,7 @@ public class LeafLibraryFragment extends AbstractLeafClassifierFragment {
                     .setPositiveButton("Enter", (dialog, whichButton) -> {
                         String spaceName = classNameField.getText().toString();
                         LeafSpecies lSpecies = new LeafSpecies(spaceName);
-                        spaces.add(Pair.create(spaceName, new LinkedList<>()));
+                        spaces.add(new LeafSpaceContainer(spaceName, new LinkedList<>()));
                         LeafClassifier.getProjectEnv().addLeafSpecies(lSpecies);
                         LeafClassifier.getProjectEnv().setModified();
                     })

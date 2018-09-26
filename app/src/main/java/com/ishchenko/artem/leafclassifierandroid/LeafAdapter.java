@@ -1,25 +1,21 @@
 package com.ishchenko.artem.leafclassifierandroid;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.support.v4.app.FragmentActivity;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
-import android.widget.ExpandableListAdapter;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.ishchenko.artem.gfx.LeafImage;
 import com.ishchenko.artem.gfx.LeafSpecies;
+import com.ishchenko.artem.tools.LeafSpaceContainer;
 import com.vansuita.pickimage.bundle.PickSetup;
 import com.vansuita.pickimage.dialog.PickImageDialog;
 
@@ -32,12 +28,12 @@ import java.util.List;
 
 public class LeafAdapter extends BaseExpandableListAdapter {
 
-    private List<Pair<String, List<String>>> spaces;
+    private List<LeafSpaceContainer> spaces;
     private Context mContext;
     private ExpandableListView view;
     private AbstractLeafClassifierFragment fragment;
 
-    public LeafAdapter(AbstractLeafClassifierFragment fragment, List<Pair<String, List<String>>> spaces, ExpandableListView view) {
+    public LeafAdapter(AbstractLeafClassifierFragment fragment, List<LeafSpaceContainer> spaces, ExpandableListView view) {
         this.fragment = fragment;
         this.mContext = fragment.getContext();
         this.spaces = spaces;
@@ -51,7 +47,7 @@ public class LeafAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return spaces.get(groupPosition).second.size();
+        return spaces.get(groupPosition).getLeafsName().size();
     }
 
     @Override
@@ -61,7 +57,7 @@ public class LeafAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return spaces.get(groupPosition).second.get(childPosition);
+        return spaces.get(groupPosition).getLeafsName().get(childPosition);
     }
 
     @Override
@@ -97,30 +93,65 @@ public class LeafAdapter extends BaseExpandableListAdapter {
         });
 
         TextView textGroup = convertView.findViewById(R.id.textGroup);
-        textGroup.setText(spaces.get(groupPosition).first);
+        textGroup.setText(spaces.get(groupPosition).getSpaceName());
         TextView classText = fragment.getView().findViewById(R.id.classText);
 
         Button addInSpace = convertView.findViewById(R.id.add_in_space);
 
         addInSpace.setOnClickListener((e) -> {
-            PickImageDialog.build(new PickSetup()).setOnPickResult(r -> {
+            PickImageDialog.newInstance(new PickSetup()).setOnPickResult(r -> {
 
                 LeafImage leafImage = new LeafImage(r.getBitmap(), r.getPath());
                 List<String> path = Arrays.asList(r.getPath().split("/"));
-                spaces.get(groupPosition).second.add(path.get(path.size() - 1));
+                spaces.get(groupPosition).getLeafsName().add(path.get(path.size() - 1));
                 LeafSpecies leafSpecies = LeafClassifier.getProjectEnv().getLeafSpecies().get(groupPosition);
                 leafSpecies.addImage(leafImage);
                 leafImage.setSpecies(leafSpecies);
                 new FindTokensTask(fragment, fragment.getView(), leafImage).execute();
                 classText.setText(leafImage.getSpecies().getName());
+                this.notifyDataSetChanged();
                 LeafClassifier.getProjectEnv().setModified();
 
-            }).show(fragment.getActivity());
-
+            }).show(fragment.getFragmentManager());
         });
 
         Button editSpace = convertView.findViewById(R.id.edit_space);
+
+        editSpace.setOnClickListener((e) -> {
+            EditText classNameField = new EditText(fragment.getContext());
+            new AlertDialog.Builder(fragment.getContext())
+                    .setTitle("Class name")
+                    .setMessage("Please enter a class name:")
+                    .setView(classNameField)
+                    .setPositiveButton("Enter", (dialog, whichButton) -> {
+                        String spaceName = classNameField.getText().toString();
+                        LeafSpecies lSpecies = LeafClassifier.getProjectEnv().getLeafSpecies().get(groupPosition);
+                        lSpecies.setName(spaceName);
+                        spaces.get(groupPosition).setSpaceName(spaceName);
+                        this.notifyDataSetChanged();
+                        LeafClassifier.getProjectEnv().setModified();
+                    })
+                    .setNegativeButton("Cancel", (dialog, whichButton) -> {
+                    })
+                    .show();
+        });
+
         Button deleteSpace = convertView.findViewById(R.id.delete_space);
+
+        deleteSpace.setOnClickListener((e) -> {
+            new AlertDialog.Builder(fragment.getContext())
+                    .setTitle("Confirm")
+                    .setMessage("Are you sure? that want to delete " + textGroup.getText() + "?")
+                    .setPositiveButton("Enter", (dialog, whichButton) -> {
+                        LeafClassifier.getProjectEnv().getLeafSpecies().remove(groupPosition);
+                        spaces.remove(groupPosition);
+                        this.notifyDataSetChanged();
+                        LeafClassifier.getProjectEnv().setModified();
+                    })
+                    .setNegativeButton("Cancel", (dialog, whichButton) -> {
+                    })
+                    .show();
+        });
 
         return convertView;
 
@@ -135,7 +166,7 @@ public class LeafAdapter extends BaseExpandableListAdapter {
         }
 
         TextView textChild = convertView.findViewById(R.id.textChild);
-        String imageName = spaces.get(groupPosition).second.get(childPosition);
+        String imageName = spaces.get(groupPosition).getLeafsName().get(childPosition);
         textChild.setText(imageName);
 
         ImageView imageView = fragment.getView().findViewById(R.id.imageView);
@@ -148,6 +179,44 @@ public class LeafAdapter extends BaseExpandableListAdapter {
             Bitmap image = leaf.getBitmap();
             updateLeafInfo(leaf, nameText, sizeText, tokensText, classText);
             imageView.setImageBitmap(image);
+        });
+
+        Button editLeaf = convertView.findViewById(R.id.edit_leaf);
+
+        editLeaf.setOnClickListener((e) -> {
+            EditText classNameField = new EditText(fragment.getContext());
+            new AlertDialog.Builder(fragment.getContext())
+                    .setTitle("Leaf name")
+                    .setMessage("Please enter a leaf name:")
+                    .setView(classNameField)
+                    .setPositiveButton("Enter", (dialog, whichButton) -> {
+                        String leafName = classNameField.getText().toString();
+                        LeafImage leafImage = LeafClassifier.getProjectEnv().getLeafSpecies().get(groupPosition).getImage(childPosition);
+                        leafImage.setName(leafName);
+                        spaces.get(groupPosition).getLeafsName().set(childPosition, leafImage.getFileName().getName());
+                        this.notifyDataSetChanged();
+                        LeafClassifier.getProjectEnv().setModified();
+                    })
+                    .setNegativeButton("Cancel", (dialog, whichButton) -> {
+                    })
+                    .show();
+        });
+
+        Button deleteLeaf = convertView.findViewById(R.id.delete_leaf);
+
+        deleteLeaf.setOnClickListener((e) -> {
+            new AlertDialog.Builder(fragment.getContext())
+                    .setTitle("Confirm")
+                    .setMessage("Are you sure? that want to delete " + textChild.getText() + "?")
+                    .setPositiveButton("Enter", (dialog, whichButton) -> {
+                        LeafClassifier.getProjectEnv().getLeafSpecies().get(groupPosition).getImages().remove(childPosition);
+                        spaces.get(groupPosition).getLeafsName().remove(childPosition);
+                        this.notifyDataSetChanged();
+                        LeafClassifier.getProjectEnv().setModified();
+                    })
+                    .setNegativeButton("Cancel", (dialog, whichButton) -> {
+                    })
+                    .show();
         });
 
         return convertView;

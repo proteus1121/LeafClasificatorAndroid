@@ -42,16 +42,18 @@ public class Utils
   /*
   * Get the extension of a file.
   */
-  public static String getExtension(File f)
-  {
-    String ext = null;
-    String s = f.getName();
-    int i = s.lastIndexOf('.');
+  public static String getFileExtension(File file) {
+    String extension = "";
 
-    if (i > 0 &&  i < s.length() - 1)
-    {
-      ext = s.substring(i+1).toLowerCase();
+    try {
+      if (file != null && file.exists()) {
+        String name = file.getName();
+        extension = name.substring(name.lastIndexOf("."));
+      }
+    } catch (Exception e) {
+      extension = "";
     }
-    return ext;
+
+    return extension;
   }
 }

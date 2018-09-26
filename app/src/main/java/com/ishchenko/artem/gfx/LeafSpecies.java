@@ -30,10 +30,13 @@ package com.ishchenko.artem.gfx;
 
 import java.util.ArrayList;
 
+import lombok.EqualsAndHashCode;
+
 /**
 * class that represents a Species of a leaf Image
 *
 */
+@EqualsAndHashCode
 public class LeafSpecies
 {
   private String speciesName;

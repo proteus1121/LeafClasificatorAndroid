@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.ishchenko.artem.gfx.LeafImage;
 import com.vansuita.pickimage.bundle.PickSetup;
@@ -58,10 +57,18 @@ public class LeafRecognizingFragment extends AbstractLeafClassifierFragment {
         });
 
         findTokens.setOnClickListener((e) -> {
+            if (leafImageForRecognizing == null)
+            {
+                return;
+            }
             new FindTokensTask(this, view, leafImageForRecognizing).execute();
         });
 
         recognizeImage.setOnClickListener((e) -> {
+            if (leafImageForRecognizing == null || LeafClassifier.getProjectEnv() == null)
+            {
+                return;
+            }
             new RecognitionTask(this, view, leafImageForRecognizing).execute();
         });
 
