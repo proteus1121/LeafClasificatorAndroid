@@ -20,12 +20,6 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/edit_leaf"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@android:drawable/ic_menu_edit" />
-
-        <Button
             android:id="@+id/delete_leaf"
             android:layout_width="30dp"
             android:layout_height="30dp"

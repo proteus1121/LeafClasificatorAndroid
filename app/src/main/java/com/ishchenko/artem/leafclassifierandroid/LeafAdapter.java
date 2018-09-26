@@ -181,27 +181,6 @@ public class LeafAdapter extends BaseExpandableListAdapter {
             imageView.setImageBitmap(image);
         });
 
-        Button editLeaf = convertView.findViewById(R.id.edit_leaf);
-
-        editLeaf.setOnClickListener((e) -> {
-            EditText classNameField = new EditText(fragment.getContext());
-            new AlertDialog.Builder(fragment.getContext())
-                    .setTitle("Leaf name")
-                    .setMessage("Please enter a leaf name:")
-                    .setView(classNameField)
-                    .setPositiveButton("Enter", (dialog, whichButton) -> {
-                        String leafName = classNameField.getText().toString();
-                        LeafImage leafImage = LeafClassifier.getProjectEnv().getLeafSpecies().get(groupPosition).getImage(childPosition);
-                        leafImage.setName(leafName);
-                        spaces.get(groupPosition).getLeafsName().set(childPosition, leafImage.getFileName().getName());
-                        this.notifyDataSetChanged();
-                        LeafClassifier.getProjectEnv().setModified();
-                    })
-                    .setNegativeButton("Cancel", (dialog, whichButton) -> {
-                    })
-                    .show();
-        });
-
         Button deleteLeaf = convertView.findViewById(R.id.delete_leaf);
 
         deleteLeaf.setOnClickListener((e) -> {
