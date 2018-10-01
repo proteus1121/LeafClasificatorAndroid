@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
     android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -33,7 +34,7 @@
 
             <com.jjoe64.graphview.GraphView
                 android:id="@+id/graph"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="200dip" />
 
             <TextView
@@ -84,13 +85,6 @@
                         android:adjustViewBounds="true"
                         android:scaleType="fitCenter"
                         android:text="max. Token: " />
-
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="35sp"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitCenter"
-                        android:text="Status: " />
 
                     <TextView
                         android:layout_width="fill_parent"
@@ -171,13 +165,6 @@
                         android:adjustViewBounds="true"
                         android:scaleType="fitCenter" />
 
-                    <TextView
-                        android:id="@+id/status"
-                        android:layout_width="fill_parent"
-                        android:layout_height="35sp"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitCenter" />
-
                     <EditText
                         android:id="@+id/inputNeurons"
                         android:layout_width="fill_parent"
@@ -247,13 +234,26 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <Button
+            <mehdi.sakout.fancybuttons.FancyButton
                 android:id="@+id/train"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-                android:text="Train Network" />
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="10dp"
+                fancy:fb_borderColor="#FFFFFF"
+                fancy:fb_borderWidth="1dp"
+                fancy:fb_defaultColor="#7ab800"
+                fancy:fb_focusColor="#9bd823"
+                fancy:fb_radius="30dp"
+                fancy:fb_text="Train Network"
+                fancy:fb_textColor="#FFFFFF" />
+
         </LinearLayout>
 
     </ScrollView>

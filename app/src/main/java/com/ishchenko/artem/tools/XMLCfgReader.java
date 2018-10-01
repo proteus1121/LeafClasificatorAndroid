@@ -68,8 +68,9 @@ public class XMLCfgReader implements ContentHandler
   private int numHiddenW  = -1;
   private int numOutput   = -1;
   private int numOutputW  = -1;
+  private double error  = -1;
 
-  private double actHiddenW;
+    private double actHiddenW;
   private double actBiasH;
   private double actOutputW;
   private double actBiasO;
@@ -174,6 +175,9 @@ public class XMLCfgReader implements ContentHandler
       {
         actBiasO = Double.parseDouble(atts.getValue("O"));
       }
+      else if (qName.compareToIgnoreCase("Error") == 0) {
+          error = Double.parseDouble(atts.getValue("Error"));
+      }
   }
 
   public void endElement(String namespaceURI, String localName, String qName) throws SAXException
@@ -221,6 +225,10 @@ public class XMLCfgReader implements ContentHandler
       else if(qName.compareToIgnoreCase("biasO") == 0 && actNetwork != null)
       {
         actNetwork.setBiasO(actBiasO, numOutput);
+      }
+      else if(qName.compareToIgnoreCase("Error") == 0 && actNetwork != null)
+      {
+          actNetwork.setAbsError(error);
       }
   }
 

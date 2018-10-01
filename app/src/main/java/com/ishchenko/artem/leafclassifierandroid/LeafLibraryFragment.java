@@ -19,6 +19,7 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.ishchenko.artem.gfx.LeafImage;
 import com.ishchenko.artem.gfx.LeafSpecies;
@@ -91,12 +92,21 @@ public class LeafLibraryFragment extends AbstractLeafClassifierFragment {
                     .show();
         });
 
-        Button save = view.findViewById(R.id.save);
+        FancyButton save = view.findViewById(R.id.save);
 
         save.setOnClickListener((e) -> {
             File directory = view.getContext().getFilesDir();
             File file = new File(directory, LeafClassifier.CACHE_NAME);
-            LeafClassifier.getProjectEnv().Save(file);
+            boolean isSaved = LeafClassifier.getProjectEnv().Save(file);
+            String result;
+            if (isSaved) {
+                result = "Saved!";
+            } else {
+                result = "Error!";
+            }
+            Toast toast = Toast.makeText(getContext(),
+                    result, Toast.LENGTH_SHORT);
+            toast.show();
         });
 
         return view;

@@ -362,6 +362,11 @@ public class ProjectEnv
           writer.endElement("output");
         }
 
+        attr.clear();
+        attr.addAttribute(null, null, "Error", null, String.valueOf(nNetwork.getAbsError()));
+        writer.startElement("Error", attr);
+        writer.endElement("Error");
+
         writer.endElement("backProp");
       }
 
@@ -372,7 +377,6 @@ public class ProjectEnv
       e.printStackTrace();
     }
 
-    System.err.println("SAVED!!!");
     configfile = filesave;
     modified = false;
 

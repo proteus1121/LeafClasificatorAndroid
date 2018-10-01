@@ -22,6 +22,8 @@ import com.vansuita.pickimage.dialog.PickImageDialog;
 import java.util.Arrays;
 import java.util.List;
 
+import mehdi.sakout.fancybuttons.FancyButton;
+
 /**
  * Created by Artem on 08.04.2018.
  */
@@ -157,6 +159,8 @@ public class LeafAdapter extends BaseExpandableListAdapter {
 
     }
 
+    private static LeafImage currentLeaf = null;
+
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
                              View convertView, ViewGroup parent) {
@@ -178,6 +182,7 @@ public class LeafAdapter extends BaseExpandableListAdapter {
             LeafImage leaf = LeafClassifier.getProjectEnv().getLeafSpecies().get(groupPosition).getImage(childPosition);
             Bitmap image = leaf.getBitmap();
             updateLeafInfo(leaf, nameText, sizeText, tokensText, classText);
+            currentLeaf = leaf;
             imageView.setImageBitmap(image);
         });
 
@@ -196,6 +201,16 @@ public class LeafAdapter extends BaseExpandableListAdapter {
                     .setNegativeButton("Cancel", (dialog, whichButton) -> {
                     })
                     .show();
+        });
+
+        FancyButton findTokens = fragment.getView().findViewById(R.id.findTokens);
+
+        findTokens.setOnClickListener((e) -> {
+            if (currentLeaf == null)
+            {
+                return;
+            }
+            new FindTokensTask(fragment, fragment.getView(), currentLeaf).execute();
         });
 
         return convertView;

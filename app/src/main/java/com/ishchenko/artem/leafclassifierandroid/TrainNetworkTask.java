@@ -24,12 +24,19 @@ class TrainNetworkTask extends AsyncTask<Void, String, Void> {
     private TextView progressText;
     private ProgressBar progressBar;
     private TextView error;
+    TextView leafImagesField;
+    TextView leafSpeciesField;
+    TextView maxTokensField;
+    TextView status;
 
     public TrainNetworkTask(View view) {
         this.view = view;
         progressText = view.findViewById(R.id.progressText);
         progressBar = view.findViewById(R.id.progressBar);
         error = view.findViewById(R.id.error);
+        leafImagesField = view.findViewById(R.id.leafImages);
+        leafSpeciesField = view.findViewById(R.id.leafSpecies);
+        maxTokensField = view.findViewById(R.id.maxTokens);
     }
 
     @Override
@@ -53,7 +60,6 @@ class TrainNetworkTask extends AsyncTask<Void, String, Void> {
         GraphView graph = view.findViewById(R.id.graph);
         graph.removeAllSeries();
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[]{});
-        graph.addSeries(series);
 
         int inputs = Integer.parseInt(inputNeurons.getText().toString());
         int hiddens = Integer.parseInt(hiddenNeurons.getText().toString());
@@ -133,7 +139,14 @@ class TrainNetworkTask extends AsyncTask<Void, String, Void> {
 //            errorPanel.addError(sumError);
             series.appendData(new DataPoint(i, sumError), true, 100);
         }
-        error.setText(String.valueOf(sumError));
+        graph.addSeries(series);
+        String textErrorOnClick = String.valueOf(LeafClassifier.getProjectEnv().getNetwork().getAbsError());
+        error.setText(textErrorOnClick);
+        leafImagesField.setText(String.valueOf(LeafClassifier.getProjectEnv().numLeafImages()));
+        leafSpeciesField.setText(String.valueOf(LeafClassifier.getProjectEnv().getLeafSpecies()));
+        maxTokensField.setText(String.valueOf(LeafClassifier.getProjectEnv().getMaxToken()));
+        graph.getViewport().setXAxisBoundsManual(true);
+        graph.getViewport().setMaxX(steps);
         publishProgress("finished", "100");
 
         return null;

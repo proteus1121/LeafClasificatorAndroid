@@ -30,6 +30,9 @@ package com.ishchenko.artem.nnetwork;
 
 import java.util.*;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class BackProp {
     private double inputA[];          // activations input
 
@@ -54,6 +57,8 @@ public class BackProp {
     private int epoch;        // number of epochs of the learn process
     private double momentum;     // momentum
     private double alpha;        // learnrate
+    @Getter
+    @Setter
     private double absError = 0.0; // the absolute error of the learning proc.
 
     // create random object to get individual random numbers

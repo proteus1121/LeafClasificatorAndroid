@@ -48,6 +48,7 @@ public class LeafClassifier extends FragmentActivity {
         pager = findViewById(R.id.pager);
         pagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(pagerAdapter);
+        pager.setOffscreenPageLimit(3);
     }
 
     public static ProjectEnv getProjectEnv() {

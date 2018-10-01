@@ -9,6 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+
+import com.ishchenko.artem.nnetwork.BackProp;
+
+import mehdi.sakout.fancybuttons.FancyButton;
 
 public class NeutronNetworkFragment extends AbstractLeafClassifierFragment {
 
@@ -32,9 +37,32 @@ public class NeutronNetworkFragment extends AbstractLeafClassifierFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.neutron_network_fragment, null);
-        Button train = view.findViewById(R.id.train);
-        train.setOnClickListener(view1 -> new TrainNetworkTask(view).execute());
+        FancyButton train = view.findViewById(R.id.train);
+        TextView error = view.findViewById(R.id.error);
+        TextView leafImages = view.findViewById(R.id.leafImages);
+        TextView leafSpecies = view.findViewById(R.id.leafSpecies);
+        TextView maxTokens = view.findViewById(R.id.maxTokens);
+
+        String textError;
+        train.setOnClickListener(view1 -> {
+            new TrainNetworkTask(view).execute();
+        });
+
+        updateViews(error, leafImages, leafSpecies, maxTokens);
+
         return view;
+    }
+
+    private void updateViews(TextView error, TextView leafImages, TextView leafSpecies, TextView maxTokens) {
+        String textError;
+        BackProp network = LeafClassifier.getProjectEnv().getNetwork();
+        if (network != null) {
+            textError = String.valueOf(network.getAbsError());
+            error.setText(textError);
+        }
+        leafImages.setText(String.valueOf(LeafClassifier.getProjectEnv().numLeafImages()));
+        leafSpecies.setText(String.valueOf(LeafClassifier.getProjectEnv().getLeafSpecies()));
+        maxTokens.setText(String.valueOf(LeafClassifier.getProjectEnv().getMaxToken()));
     }
 
     @Override
