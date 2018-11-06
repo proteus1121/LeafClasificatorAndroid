@@ -21,6 +21,7 @@ public class FindTokensUtils {
 
     public static void findTokens(View view, BiConsumer<String, String> publishProgress, LeafImage leafImage, AbstractLeafClassifierFragment fragment){
 
+        publishProgress.accept("Load Image...", "5");
         // Now we perform the Image processing
         ImageProcessor imgProc = new ImageProcessor(leafImage.getImage(), view.getContext());
 
@@ -29,7 +30,7 @@ public class FindTokensUtils {
         SeekBar minLine = view.findViewById(R.id.minLine);
         ImageView imageView = view.findViewById(R.id.imageView);
 
-        publishProgress.accept("Edge detection...", "5");
+        publishProgress.accept("Edge detection...", "10");
         imgProc.edgeDetect(threshold.getProgress() * 10);
 
         publishProgress.accept("Thinning...", "20");

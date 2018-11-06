@@ -41,9 +41,11 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -60,8 +62,6 @@ public class ProjectEnv
 
   private File configfile = null;
 
-  private LeafClassifier lrec = null;
-
   // the following 3 variables are only used in
   // applet mode
   private URL codeBase = null;
@@ -76,9 +76,8 @@ public class ProjectEnv
   private int numHiddenNeurons;
   private int numOutputNeurons;
 
-  public ProjectEnv(LeafClassifier lrec)
+  public ProjectEnv()
   {
-    this.lrec = lrec;
     leafSpecies = new ArrayList<>(); // create a new List of Images
   }
 
@@ -208,6 +207,19 @@ public class ProjectEnv
 
         URL nURL = new URL("file://" + fileopen.toString());
         fIn = nURL.openStream();
+
+//      try(BufferedReader br = new BufferedReader(new FileReader(nURL.getFile()))) {
+//        StringBuilder sb = new StringBuilder();
+//        String line = br.readLine();
+//
+//        String allStri = "";
+//        while (line != null) {
+//          sb.append(line);
+//          sb.append(System.lineSeparator());
+//          line = br.readLine();
+//        }
+//        String everything = sb.toString();
+//      }
 
       parser.parse(new InputSource(fIn));
     } catch(SAXException | IOException e)

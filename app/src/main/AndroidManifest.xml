@@ -17,16 +17,20 @@
             android:exported="false"
             android:grantUriPermissions="true"
             tools:replace="android:authorities">
-        <meta-data
-            android:name="android.support.FILE_PROVIDER_PATHS"
-            android:resource="@xml/picker_provider_paths" />
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/picker_provider_paths" />
         </provider>
-        <activity android:name="com.ishchenko.artem.leafclassifierandroid.LeafClassifier">
+
+        <activity
+            android:name="com.ishchenko.artem.leafclassifierandroid.WelcomeActivity"
+            android:theme="@style/Base.Theme.AppCompat.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.ishchenko.artem.leafclassifierandroid.LeafClassifier"/>
     </application>
 
 </manifest>

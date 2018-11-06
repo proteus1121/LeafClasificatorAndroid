@@ -10,39 +10,19 @@ import android.support.v4.view.ViewPager;
 
 import com.ishchenko.artem.tools.ProjectEnv;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 
 public class LeafClassifier extends FragmentActivity {
     static final int PAGE_COUNT = 3;
-    public static final String CACHE_NAME = "LeafRecognizingCache";
 
     ViewPager pager;
     PagerAdapter pagerAdapter;
-    private static ProjectEnv projectEnv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        projectEnv = new ProjectEnv(this);
         super.onCreate(savedInstanceState);
-        File directory = getFilesDir();
-        File file = new File(directory, CACHE_NAME);
-        if (file.exists()) {
-            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-                String line;
-                while ((line = br.readLine()) != null) {
-                    System.err.println(line);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            projectEnv.Open(file);
-        }
         setContentView(R.layout.activity_leaf_clasificator);
 
         pager = findViewById(R.id.pager);
@@ -52,7 +32,7 @@ public class LeafClassifier extends FragmentActivity {
     }
 
     public static ProjectEnv getProjectEnv() {
-        return projectEnv;
+        return WelcomeActivity.projectEnv;
     }
 
     private class MyFragmentPagerAdapter extends FragmentPagerAdapter {

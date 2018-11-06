@@ -70,7 +70,7 @@ public class XMLCfgReader implements ContentHandler
   private int numOutputW  = -1;
   private double error  = -1;
 
-    private double actHiddenW;
+  private double actHiddenW;
   private double actBiasH;
   private double actOutputW;
   private double actBiasO;

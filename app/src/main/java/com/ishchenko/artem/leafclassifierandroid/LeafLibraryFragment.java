@@ -96,7 +96,7 @@ public class LeafLibraryFragment extends AbstractLeafClassifierFragment {
 
         save.setOnClickListener((e) -> {
             File directory = view.getContext().getFilesDir();
-            File file = new File(directory, LeafClassifier.CACHE_NAME);
+            File file = new File(directory, WelcomeActivity.CACHE_NAME);
             boolean isSaved = LeafClassifier.getProjectEnv().Save(file);
             String result;
             if (isSaved) {

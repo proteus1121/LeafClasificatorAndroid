@@ -33,6 +33,7 @@ import android.graphics.Bitmap;
 import com.ishchenko.artem.tools.Utils;
 
 import net.windward.android.awt.Image;
+import net.windward.android.awt.image.BufferedImage;
 import net.windward.android.imageio.ImageIO;
 
 import java.io.File;
@@ -48,7 +49,6 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode
 public class LeafImage {
-    private Image image = null;
     private Bitmap imageBitmap = null;
     private ArrayList tokens = null;
     private String filename = null;
@@ -57,16 +57,7 @@ public class LeafImage {
     public LeafImage(Bitmap imageBitmap, String path) {
         this.imageBitmap = imageBitmap;
         filename = path;
-        try {
-            image = ImageIO.read(new File(path));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         tokens = new ArrayList();
-    }
-
-    public void setImage(Image img) {
-        this.image = img;
     }
 
     public Bitmap getBitmap() {
@@ -86,15 +77,16 @@ public class LeafImage {
     }
 
     public Image getImage() {
-        return image;
-    }
-
-    public int getWidth() {
-        return image.getWidth(null);
-    }
-
-    public int getHeight() {
-        return image.getHeight(null);
+        try {
+            BufferedImage bimg = ImageIO.read(new File(filename));
+            int width = 400;
+            int height = (bimg.getHeight() / bimg.getWidth()) * width;
+            // resize original image
+            return bimg.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public void addToken(LeafToken token) {
@@ -162,11 +154,6 @@ public class LeafImage {
         String newFileName = getFileName().getParent() + File.separator + filename + Utils.getFileExtension(oldFileName);
         File newFile = new File(newFileName);
         oldFileName.renameTo(newFile);
-        try {
-            image = ImageIO.read(newFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         this.filename = newFileName;
     }
 }
