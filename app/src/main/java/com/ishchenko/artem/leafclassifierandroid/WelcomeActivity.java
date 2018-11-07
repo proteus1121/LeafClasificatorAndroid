@@ -3,10 +3,11 @@ package com.ishchenko.artem.leafclassifierandroid;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.ishchenko.artem.tools.ProjectEnv;
-
-import java.io.File;
 
 public class WelcomeActivity extends AppCompatActivity {
     public static final String CACHE_NAME = "LeafRecognizingCache";
@@ -16,6 +17,10 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
+        View rootView = getWindow().getDecorView().getRootView();
+
+        TextView textView = rootView.findViewById(R.id.progressText);
+        ProgressBar progressBar = rootView.findViewById(R.id.progressBar);
 
         Thread welcomeThread = new Thread() {
 
@@ -23,13 +28,7 @@ public class WelcomeActivity extends AppCompatActivity {
             public void run() {
                 try {
                     super.run();
-                    File directory = getFilesDir();
-                    File file = new File(directory, CACHE_NAME);
-                    if (file.exists() && projectEnv == null) {
-                        projectEnv = new ProjectEnv();
-                        projectEnv.Open(file);
-                    }
-
+                    Void execute = new LoadCacheTask(textView, progressBar, getFilesDir()).execute().get();
                 } catch (Exception ignored) {
 
                 } finally {
