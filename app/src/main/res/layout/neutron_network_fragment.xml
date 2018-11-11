@@ -30,6 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:progressTint="#7ab800"
                 android:max="100" />
 
             <com.jjoe64.graphview.GraphView
@@ -72,12 +73,12 @@
                         android:scaleType="fitCenter"
                         android:text="Leaf Images: " />
 
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="35sp"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitCenter"
-                        android:text="Leaf Species: " />
+                    <!--<TextView-->
+                        <!--android:layout_width="fill_parent"-->
+                        <!--android:layout_height="35sp"-->
+                        <!--android:adjustViewBounds="true"-->
+                        <!--android:scaleType="fitCenter"-->
+                        <!--android:text="Leaf Species: " />-->
 
                     <TextView
                         android:layout_width="fill_parent"
@@ -151,12 +152,12 @@
                         android:adjustViewBounds="true"
                         android:scaleType="fitCenter" />
 
-                    <TextView
-                        android:id="@+id/leafSpecies"
-                        android:layout_width="fill_parent"
-                        android:layout_height="35sp"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitCenter" />
+                    <!--<TextView-->
+                        <!--android:id="@+id/leafSpecies"-->
+                        <!--android:layout_width="fill_parent"-->
+                        <!--android:layout_height="35sp"-->
+                        <!--android:adjustViewBounds="true"-->
+                        <!--android:scaleType="fitCenter" />-->
 
                     <TextView
                         android:id="@+id/maxTokens"

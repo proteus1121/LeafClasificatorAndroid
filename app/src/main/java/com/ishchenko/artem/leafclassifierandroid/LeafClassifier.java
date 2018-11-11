@@ -13,11 +13,14 @@ import com.ishchenko.artem.tools.ProjectEnv;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import lombok.Getter;
+
 
 public class LeafClassifier extends FragmentActivity {
     static final int PAGE_COUNT = 3;
 
     ViewPager pager;
+    @Getter
     PagerAdapter pagerAdapter;
 
     @Override

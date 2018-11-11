@@ -52,19 +52,9 @@ public class FindTokensUtils {
         ArrayList leafTokens = imgProc.getTokens();
         leafImage.setTokens(leafTokens);
 
-        BufferedImage bufferedImage = ImageProcessor.toBufferedImage(imgProc.getImage());
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
-            ImageIO.write(bufferedImage, "png", baos);
-            baos.flush();
-            byte[] imageInByte = baos.toByteArray();
-            Bitmap bmp = BitmapFactory.decodeByteArray(imageInByte, 0, imageInByte.length);
-            leafImage.setBitmap(bmp);
-            fragment.getActivity().runOnUiThread(() -> imageView.setImageBitmap(bmp));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Bitmap bitmap = ImageUtils.convertFromImageToBitmap(imgProc.getImage());
+        leafImage.setBitmap(bitmap);
+        fragment.getActivity().runOnUiThread(() -> imageView.setImageBitmap(bitmap));
         publishProgress.accept("finished.", "100");
     }
 }

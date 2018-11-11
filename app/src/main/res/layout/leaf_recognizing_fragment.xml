@@ -29,6 +29,7 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:progressTint="#7ab800"
                 android:layout_weight="1"
                 android:max="100" />
 
@@ -183,8 +184,10 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="50"
                         android:adjustViewBounds="true"
+                        android:progressTint="#7ab800"
+                        android:thumbTint="#7ab800"
                         android:max="10"
-                        android:progress="5"
+                        android:progress="4"
                         android:scaleType="fitCenter" />
 
                 </TableRow>
@@ -210,6 +213,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="50"
                         android:adjustViewBounds="true"
+                        android:progressTint="#7ab800"
+                        android:thumbTint="#7ab800"
                         android:max="10"
                         android:progress="2"
                         android:scaleType="fitCenter" />
@@ -237,6 +242,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="50"
                         android:adjustViewBounds="true"
+                        android:progressTint="#7ab800"
+                        android:thumbTint="#7ab800"
                         android:max="10"
                         android:progress="2"
                         android:scaleType="fitCenter" />

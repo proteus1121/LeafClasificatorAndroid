@@ -5,35 +5,36 @@ package com.ishchenko.artem.leafclassifierandroid;
  */
 
 import android.app.AlertDialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StrictMode;
 import android.support.annotation.RequiresApi;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
-import android.widget.SeekBar;
-import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.ishchenko.artem.gfx.LeafImage;
 import com.ishchenko.artem.gfx.LeafSpecies;
 import com.ishchenko.artem.tools.LeafSpaceContainer;
-import com.vansuita.pickimage.bundle.PickSetup;
-import com.vansuita.pickimage.dialog.PickImageDialog;
+import com.obsez.android.lib.filechooser.ChooserDialog;
+
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import mehdi.sakout.fancybuttons.FancyButton;
+
+import static android.support.v4.content.PermissionChecker.checkSelfPermission;
 
 public class LeafLibraryFragment extends AbstractLeafClassifierFragment {
 
@@ -107,6 +108,58 @@ public class LeafLibraryFragment extends AbstractLeafClassifierFragment {
             Toast toast = Toast.makeText(getContext(),
                     result, Toast.LENGTH_SHORT);
             toast.show();
+        });
+
+        FancyButton share = view.findViewById(R.id.share);
+
+        share.setOnClickListener((e) -> {
+
+            if (checkSelfPermission(getContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+
+            Intent intentShareFile = new Intent(Intent.ACTION_SEND);
+            File directory = view.getContext().getFilesDir();
+            File source = new File(directory, WelcomeActivity.CACHE_NAME);
+            File destination = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/leafrecog.txt");
+            try {
+                FileUtils.copyFile(source, destination);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+
+            if(destination.exists()) {
+                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                StrictMode.setVmPolicy(builder.build());
+                intentShareFile.setType("application/txt");
+                intentShareFile.putExtra(Intent.EXTRA_STREAM,
+                        Uri.parse("file://"+destination.getAbsolutePath()));
+
+                startActivity(Intent.createChooser(intentShareFile, "Share Library"));
+            }
+        });
+
+        FancyButton loadLib = view.findViewById(R.id.loadLib);
+
+        loadLib.setOnClickListener((e) -> {
+            new ChooserDialog().with(this.getContext())
+                    .withFilterRegex(false, false, ".*\\.(txt)")
+                    .withResources(R.string.title_choose_file, R.string.title_choose, R.string.dialog_cancel)
+                    .withChosenListener((path, pathFile) -> {
+                        File directory = view.getContext().getFilesDir();
+                        File destination = new File(directory, WelcomeActivity.CACHE_NAME);
+                        try {
+                            FileUtils.copyFile(pathFile, destination);
+                            Intent i = new Intent(getContext(),
+                                    WelcomeActivity.class);
+                            startActivity(i);
+
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
+                    })
+                    .build()
+                    .show();
         });
 
         return view;

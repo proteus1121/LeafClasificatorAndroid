@@ -208,18 +208,19 @@ public class ProjectEnv
         URL nURL = new URL("file://" + fileopen.toString());
         fIn = nURL.openStream();
 
-//      try(BufferedReader br = new BufferedReader(new FileReader(nURL.getFile()))) {
-//        StringBuilder sb = new StringBuilder();
-//        String line = br.readLine();
-//
-//        String allStri = "";
-//        while (line != null) {
-//          sb.append(line);
-//          sb.append(System.lineSeparator());
-//          line = br.readLine();
-//        }
-//        String everything = sb.toString();
-//      }
+      try(BufferedReader br = new BufferedReader(new FileReader(nURL.getFile()))) {
+        StringBuilder sb = new StringBuilder();
+        String line = br.readLine();
+
+        String allStri = "";
+        while (line != null) {
+          sb.append(line);
+          sb.append(System.lineSeparator());
+          line = br.readLine();
+        }
+        String everything = sb.toString();
+        System.out.print(everything);
+      }
 
       parser.parse(new InputSource(fIn));
     } catch(SAXException | IOException e)
@@ -303,6 +304,13 @@ public class ProjectEnv
             //writer.characters(""+ltoken.getCOS());
             writer.endElement("leafToken");
           }
+          attr.clear();
+          writer.startElement("leafSize", attr);
+          attr.addAttribute(null, null, "height", null, ""+limage.getHeight());
+          attr.addAttribute(null, null, "width", null, ""+limage.getWidth());
+          writer.endElement("leafSize");
+
+          writer.endElement("leafImage");
           writer.endElement("leafImage");
         }
         writer.endElement("leafSpecies");

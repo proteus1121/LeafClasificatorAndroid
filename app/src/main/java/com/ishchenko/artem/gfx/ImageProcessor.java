@@ -31,17 +31,13 @@ package com.ishchenko.artem.gfx;
 import android.content.Context;
 import android.view.View;
 
-import net.windward.android.awt.*;
+import net.windward.android.awt.Graphics2D;
+import net.windward.android.awt.Image;
 import net.windward.android.awt.image.BufferedImage;
 import net.windward.android.awt.image.MemoryImageSource;
 import net.windward.android.awt.image.PixelGrabber;
-import net.windward.android.awt.image.RenderedImage;
-import net.windward.android.imageio.ImageIO;
 
-import org.apache.commons.imaging.formats.jpeg.segments.SofnSegment;
-
-import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
 
 import static net.windward.android.awt.Image.createImage;
 
@@ -54,7 +50,7 @@ import static net.windward.android.awt.Image.createImage;
  */
 public class ImageProcessor extends View {
     private int Pixels[];                          // PixelArray for representing the Picture
-    private ArrayList alltokens = null;   // private ArrayList that has all tokens in it
+    private ArrayList<LeafToken> alltokens = null;   // private ArrayList that has all tokens in it
     private int width, height;              // Size of the Picture.
     Context context;
 
@@ -85,9 +81,10 @@ public class ImageProcessor extends View {
     /**
      * Constructor
      */
-    public ImageProcessor(int _w, int _h, Context context) {
+    public ImageProcessor(int _w, int _h, ArrayList alltokens, Context context) {
         super(context);
         this.context = context;
+        this.alltokens = alltokens;
         width = _w;
         height = _h;
         Pixels = new int[width * height];
@@ -316,7 +313,7 @@ public class ImageProcessor extends View {
 
         // first we create a clear buffer Picture with the
         // same height & width
-        ImageProcessor Source = new ImageProcessor(width, height, context);
+        ImageProcessor Source = new ImageProcessor(width, height, alltokens, context);
         Source.Clear();
 
         // Now we process all source pixels of the Array
@@ -369,7 +366,7 @@ public class ImageProcessor extends View {
         int x, y;
         remain = true;
 
-        while (remain) {
+            while (remain) {
             remain = false;
             for (j = 0; j <= 6; j += 2) // j = 0, 2, 4, 6
             {
@@ -675,7 +672,7 @@ public class ImageProcessor extends View {
         root_x = root_y = -1;
 
         // create a new ArrayList to count the tokens
-        alltokens = new ArrayList();
+        alltokens = new ArrayList<>();
 
         for (y = 0; y < height; y++) {
             for (x = 0; x < width; x++) {
@@ -755,6 +752,13 @@ public class ImageProcessor extends View {
         }
 
         if (isRoot == true) setPixel(x, y, COLOR_SKELETON);
+    }
+
+    public void paintAllLines() {
+        alltokens.forEach(leafToken -> {
+            drawLine(leafToken.getX1(), leafToken.getY1(), leafToken.getX2(), leafToken.getY2(), COLOR_GOODLINE);
+            drawSquare(leafToken.getX1(), leafToken.getY1(), 5, COLOR_BADLINE);
+        });
     }
 
     /**

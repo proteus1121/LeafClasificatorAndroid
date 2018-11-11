@@ -28,8 +28,10 @@
 
 package com.ishchenko.artem.gfx;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 
+import com.ishchenko.artem.leafclassifierandroid.ImageUtils;
 import com.ishchenko.artem.tools.Utils;
 
 import net.windward.android.awt.Image;
@@ -42,6 +44,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * class that represents a image of a single leaf with all
@@ -49,19 +53,35 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode
 public class LeafImage {
-    private Bitmap imageBitmap = null;
-    private ArrayList tokens = null;
-    private String filename = null;
+    private Bitmap imageBitmap;
+    private ArrayList tokens;
+    private String filename;
     private LeafSpecies species = null;
+    @Getter
+    @Setter
+    private int width;
+    @Getter
+    @Setter
+    private int height;
 
     public LeafImage(Bitmap imageBitmap, String path) {
         this.imageBitmap = imageBitmap;
         filename = path;
         tokens = new ArrayList();
+        if (imageBitmap != null) {
+            width = imageBitmap.getWidth();
+            height = imageBitmap.getHeight();
+        }
     }
 
-    public Bitmap getBitmap() {
-        return imageBitmap;
+    public Bitmap getBitmap(Context context) {
+        if (imageBitmap != null) {
+            return imageBitmap;
+        } else {
+            ImageProcessor imageProcessor = new ImageProcessor(width, height, tokens, context);
+            imageProcessor.paintAllLines();
+            return ImageUtils.convertFromImageToBitmap(imageProcessor.getImage());
+        }
     }
 
     public void setBitmap(Bitmap btmp) {
@@ -79,8 +99,9 @@ public class LeafImage {
     public Image getImage() {
         try {
             BufferedImage bimg = ImageIO.read(new File(filename));
-            int width = 400;
-            int height = (bimg.getHeight() / bimg.getWidth()) * width;
+            width = 400;
+            double percent = ((double) bimg.getHeight() / (double) bimg.getWidth()) * width;
+            height = (int) Math.round(percent);
             // resize original image
             return bimg.getScaledInstance(width, height, Image.SCALE_SMOOTH);
         } catch (IOException e) {

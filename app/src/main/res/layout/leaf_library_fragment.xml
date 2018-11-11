@@ -26,11 +26,12 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:progressTint="#7ab800"
             android:max="100" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="185dp"
             android:orientation="horizontal">
 
             <ImageView
@@ -173,16 +174,6 @@
                 android:layout_gravity="center"
                 android:layout_margin="5dp">
 
-                <TableRow>
-
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitCenter"
-                        android:text="Image Operations" />
-                </TableRow>
-
                 <TableRow
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -204,8 +195,10 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="50"
                         android:adjustViewBounds="true"
+                        android:progressTint="#7ab800"
+                        android:thumbTint="#7ab800"
                         android:max="10"
-                        android:progress="5"
+                        android:progress="4"
                         android:scaleType="fitCenter" />
                 </TableRow>
 
@@ -231,6 +224,8 @@
                         android:layout_weight="50"
                         android:adjustViewBounds="true"
                         android:max="10"
+                        android:progressTint="#7ab800"
+                        android:thumbTint="#7ab800"
                         android:progress="2"
                         android:scaleType="fitCenter" />
                 </TableRow>
@@ -256,6 +251,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="50"
                         android:adjustViewBounds="true"
+                        android:progressTint="#7ab800"
+                        android:thumbTint="#7ab800"
                         android:max="10"
                         android:progress="2"
                         android:scaleType="fitCenter" />
@@ -307,6 +304,54 @@
                         fancy:fb_text="Save state"
                         fancy:fb_textColor="#FFFFFF" />
                 </TableRow>
+
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="100"
+                    android:orientation="horizontal">
+
+                    <mehdi.sakout.fancybuttons.FancyButton
+                        android:id="@+id/loadLib"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="50"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="5dp"
+                        android:paddingBottom="10dp"
+                        android:paddingLeft="20dp"
+                        android:paddingRight="20dp"
+                        android:paddingTop="10dp"
+                        fancy:fb_borderColor="#FFFFFF"
+                        fancy:fb_borderWidth="1dp"
+                        fancy:fb_defaultColor="#7ab800"
+                        fancy:fb_focusColor="#9bd823"
+                        fancy:fb_radius="30dp"
+                        fancy:fb_text="Load Library"
+                        fancy:fb_textColor="#FFFFFF" />
+
+                    <mehdi.sakout.fancybuttons.FancyButton
+                        android:id="@+id/share"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="50"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="5dp"
+                        android:paddingBottom="10dp"
+                        android:paddingLeft="20dp"
+                        android:paddingRight="20dp"
+                        android:paddingTop="10dp"
+                        fancy:fb_borderColor="#FFFFFF"
+                        fancy:fb_borderWidth="1dp"
+                        fancy:fb_defaultColor="#7ab800"
+                        fancy:fb_focusColor="#9bd823"
+                        fancy:fb_radius="30dp"
+                        fancy:fb_text="Share Library"
+                        fancy:fb_textColor="#FFFFFF" />
+                </TableRow>
+
             </TableLayout>
 
         </LinearLayout>

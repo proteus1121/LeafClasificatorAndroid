@@ -180,7 +180,7 @@ public class LeafAdapter extends BaseExpandableListAdapter {
         TextView tokensText = fragment.getView().findViewById(R.id.tokensText);
         convertView.setOnClickListener(v -> {
             LeafImage leaf = LeafClassifier.getProjectEnv().getLeafSpecies().get(groupPosition).getImage(childPosition);
-            Bitmap image = leaf.getBitmap();
+            Bitmap image = leaf.getBitmap(mContext);
             updateLeafInfo(leaf, nameText, sizeText, tokensText, classText);
             currentLeaf = leaf;
             imageView.setImageBitmap(image);

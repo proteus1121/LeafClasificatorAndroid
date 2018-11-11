@@ -25,7 +25,7 @@ class TrainNetworkTask extends AsyncTask<Void, String, Void> {
     private ProgressBar progressBar;
     private TextView error;
     TextView leafImagesField;
-    TextView leafSpeciesField;
+//    TextView leafSpeciesField;
     TextView maxTokensField;
     TextView status;
 
@@ -35,7 +35,7 @@ class TrainNetworkTask extends AsyncTask<Void, String, Void> {
         progressBar = view.findViewById(R.id.progressBar);
         error = view.findViewById(R.id.error);
         leafImagesField = view.findViewById(R.id.leafImages);
-        leafSpeciesField = view.findViewById(R.id.leafSpecies);
+//        leafSpeciesField = view.findViewById(R.id.leafSpecies);
         maxTokensField = view.findViewById(R.id.maxTokens);
     }
 
@@ -143,7 +143,7 @@ class TrainNetworkTask extends AsyncTask<Void, String, Void> {
         String textErrorOnClick = String.valueOf(LeafClassifier.getProjectEnv().getNetwork().getAbsError());
         error.setText(textErrorOnClick);
         leafImagesField.setText(String.valueOf(LeafClassifier.getProjectEnv().numLeafImages()));
-        leafSpeciesField.setText(String.valueOf(LeafClassifier.getProjectEnv().getLeafSpecies()));
+//        leafSpeciesField.setText(String.valueOf(LeafClassifier.getProjectEnv().getLeafSpecies()));
         maxTokensField.setText(String.valueOf(LeafClassifier.getProjectEnv().getMaxToken()));
         graph.getViewport().setXAxisBoundsManual(true);
         graph.getViewport().setMaxX(steps);

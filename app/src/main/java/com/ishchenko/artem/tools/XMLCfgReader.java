@@ -69,6 +69,8 @@ public class XMLCfgReader implements ContentHandler
   private int numOutput   = -1;
   private int numOutputW  = -1;
   private double error  = -1;
+  private int height = 0;
+  private int width = 0;
 
   private double actHiddenW;
   private double actBiasH;
@@ -125,6 +127,11 @@ public class XMLCfgReader implements ContentHandler
           Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
           actImage = new LeafImage(bitmap , filePath);
           actImage.setSpecies(actSpecies);
+      }
+      else if(qName.compareToIgnoreCase("leafSize") == 0)
+      {
+          height = Integer.parseInt(atts.getValue("height"));
+          width = Integer.parseInt(atts.getValue("width"));
       }
       else if(qName.compareToIgnoreCase("leafToken") == 0)
       {
@@ -197,6 +204,13 @@ public class XMLCfgReader implements ContentHandler
       {
         actSpecies.addImage(actImage);
         actImage = null;
+      }
+      else if(qName.compareToIgnoreCase("leafSize") == 0 && actImage != null)
+      {
+          actImage.setHeight(height);
+          actImage.setWidth(width);
+          height = 0;
+          width = 0;
       }
       else if(qName.compareToIgnoreCase("leafToken") == 0 && actToken != null && actImage != null)
       {

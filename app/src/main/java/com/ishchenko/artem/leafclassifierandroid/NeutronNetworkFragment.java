@@ -40,7 +40,7 @@ public class NeutronNetworkFragment extends AbstractLeafClassifierFragment {
         FancyButton train = view.findViewById(R.id.train);
         TextView error = view.findViewById(R.id.error);
         TextView leafImages = view.findViewById(R.id.leafImages);
-        TextView leafSpecies = view.findViewById(R.id.leafSpecies);
+//        TextView leafSpecies = view.findViewById(R.id.leafSpecies);
         TextView maxTokens = view.findViewById(R.id.maxTokens);
 
         String textError;
@@ -48,7 +48,7 @@ public class NeutronNetworkFragment extends AbstractLeafClassifierFragment {
             new TrainNetworkTask(view).execute();
         });
 
-        updateViews(error, leafImages, leafSpecies, maxTokens);
+        updateViews(error, leafImages, null, maxTokens);
 
         return view;
     }
@@ -61,7 +61,7 @@ public class NeutronNetworkFragment extends AbstractLeafClassifierFragment {
             error.setText(textError);
         }
         leafImages.setText(String.valueOf(LeafClassifier.getProjectEnv().numLeafImages()));
-        leafSpecies.setText(String.valueOf(LeafClassifier.getProjectEnv().getLeafSpecies()));
+//        leafSpecies.setText(String.valueOf(LeafClassifier.getProjectEnv().getLeafSpecies()));
         maxTokens.setText(String.valueOf(LeafClassifier.getProjectEnv().getMaxToken()));
     }
 

@@ -50,7 +50,7 @@ public class LeafRecognizingFragment extends AbstractLeafClassifierFragment {
         addImage.setOnClickListener((e) -> {
             PickImageDialog.build(new PickSetup()).setOnPickResult(r -> {
                 leafImageForRecognizing = new LeafImage(r.getBitmap(), r.getPath());
-                imageView.setImageBitmap(leafImageForRecognizing.getBitmap());
+                imageView.setImageBitmap(leafImageForRecognizing.getBitmap(getContext()));
             }).show(getActivity());
 
             LeafClassifier.getProjectEnv().setModified();
