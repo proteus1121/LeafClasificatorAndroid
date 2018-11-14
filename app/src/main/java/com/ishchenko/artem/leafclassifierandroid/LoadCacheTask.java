@@ -1,9 +1,11 @@
 package com.ishchenko.artem.leafclassifierandroid;
 
+import android.app.Activity;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ishchenko.artem.tools.ProjectEnv;
 
@@ -19,11 +21,13 @@ public class LoadCacheTask extends AsyncTask<Void, String, Void> {
     private TextView textView;
     private ProgressBar progressBar;
     private File directory;
+    private Activity ac;
 
-    public LoadCacheTask(TextView textView, ProgressBar progressBar, File directory) {
+    public LoadCacheTask(TextView textView, ProgressBar progressBar, File directory, Activity ac) {
         this.textView = textView;
         this.progressBar = progressBar;
         this.directory = directory;
+        this.ac = ac;
     }
 
     @Override
