@@ -28,6 +28,9 @@
 
 package com.ishchenko.artem.tools;
 
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+
 import com.ishchenko.artem.gfx.LeafImage;
 import com.ishchenko.artem.gfx.LeafSpecies;
 import com.ishchenko.artem.gfx.LeafToken;
@@ -174,6 +177,7 @@ public class ProjectEnv
   * method that opens a project file and parses through it's
   * contents to initialize the Project environment
   */
+  @RequiresApi(api = Build.VERSION_CODES.KITKAT)
   public boolean Open(File fileopen)
   {
     XMLReader parser = null;

@@ -1,8 +1,8 @@
 package com.ishchenko.artem.leafclassifierandroid;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -23,13 +23,14 @@ public class WelcomeActivity extends AppCompatActivity {
         TextView textView = rootView.findViewById(R.id.progressText);
         ProgressBar progressBar = rootView.findViewById(R.id.progressBar);
 
+        Activity ac = this;
         Thread welcomeThread = new Thread() {
 
             @Override
             public void run() {
                 try {
                     super.run();
-                    Void execute = new LoadCacheTask(textView, progressBar, getFilesDir()).execute().get();
+                    Void execute = new LoadCacheTask(textView, progressBar, getFilesDir(), ac).execute().get();
                 } catch (Exception ignored) {
 
                 } finally {

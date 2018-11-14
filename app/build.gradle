@@ -1,16 +1,16 @@
-//noinspection GradleCompatible
-//noinspection GradleCompatible
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.ishchenko.artem.leafclasificatorandroid"
-        minSdkVersion 24
-        targetSdkVersion 27
-        versionCode 1
+        minSdkVersion 14
+        targetSdkVersion 28
+        versionCode 4
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -24,23 +24,40 @@ android {
     }
     productFlavors {
     }
+
+    signingConfigs {
+        release {
+
+        }
+
+        buildTypes {
+            release {
+                minifyEnabled true
+                signingConfig signingConfigs.release
+                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            }
+        }
+        compileOptions {
+            targetCompatibility 1.8
+            sourceCompatibility 1.8
+        }
+    }
 }
 
 dependencies {
     compile files('libs/android-awt-1.0.0.jar')
-    compile 'com.github.jrvansuita:PickImage:+'
+    implementation 'com.github.jrvansuita:PickImage:2.2.4'
     compile 'xerces:xercesImpl:2.8.0'
-    compileOnly 'org.projectlombok:lombok:1.18.2'
+    compileOnly 'org.projectlombok:lombok:1.16.20'
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
-    annotationProcessor 'org.projectlombok:lombok:1.18.2'
+    annotationProcessor 'org.projectlombok:lombok:1.16.20'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    //noinspection GradleCompatible
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation 'com.jjoe64:graphview:4.2.2'
     implementation 'com.github.medyo:fancybuttons:1.9.0'
     implementation 'com.obsez.android.lib.filechooser:filechooser:1.1.11'
-    implementation "com.android.support:appcompat-v7:27.1.1"
+    //noinspection GradleCompatible
+    implementation "com.android.support:appcompat-v7:28.0.0-alpha3"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
