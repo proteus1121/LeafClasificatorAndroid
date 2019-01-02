@@ -46,8 +46,9 @@ android {
 
 dependencies {
     compile files('libs/android-awt-1.0.0.jar')
+    // https://mvnrepository.com/artifact/com.rackspace.apache/xerces2-xsd11
+    compile files('libs/xerces2-xsd11-2.11.2.jar')
     implementation 'com.github.jrvansuita:PickImage:2.2.4'
-    compile 'xerces:xercesImpl:2.8.0'
     compileOnly 'org.projectlombok:lombok:1.16.20'
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
     annotationProcessor 'org.projectlombok:lombok:1.16.20'

@@ -37,6 +37,7 @@ import com.ishchenko.artem.gfx.LeafToken;
 import com.ishchenko.artem.leafclassifierandroid.LeafClassifier;
 import com.ishchenko.artem.nnetwork.BackProp;
 
+import org.apache.xerces.parsers.SAXParser;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -54,6 +55,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Vector;
+
+import javax.xml.parsers.SAXParserFactory;
 
 /**
 * special class for loading/saving and administrating
@@ -185,20 +188,14 @@ public class ProjectEnv
 
     try
     {
-      parser = XMLReaderFactory.createXMLReader();
+      SAXParserFactory factory = SAXParserFactory.newInstance();
+      factory.setNamespaceAware(true);
+      parser = factory.newSAXParser().getXMLReader();
     }
     catch(Exception e)
     {
-      // fall back on Xerces parser by name
-      try
-      {
-        parser = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
-      }
-      catch (Exception ee)
-      {
         e.printStackTrace();
         return false;
-      }
     }
 
     // Install the Document Handler
