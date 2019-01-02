@@ -1,6 +1,6 @@
 ![alt text](https://github.com/proteus1121/LeafClasificatorAndroid/blob/master/docs/icon.png "Logo")
 
-Leaf Clasification - android application for the classification of plants by leaves.
+Leaf Classification - android application for the classification of plants by leaves.
 With this app you can:
 - form your library of leaves
 - share a library of leaves with friends
